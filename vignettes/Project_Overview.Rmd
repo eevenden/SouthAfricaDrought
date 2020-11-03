@@ -14,6 +14,13 @@ knitr::opts_chunk$set(
 )
 ```
 
+# Description
 ```{r setup}
 library(SouthAfricaDrought)
 ```
+
+# Methods
+
+# Data Visualization
+
+# Results
