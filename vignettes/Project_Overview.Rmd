@@ -17,9 +17,11 @@ knitr::opts_chunk$set(
 # Description
 ```{r setup}
 library(SouthAfricaDrought)
+library(geospaar)
 library(sf)
+library(rgdal)
 
-temp1 <- system.file("raw-data/SouthAfrica_Boundary.shp", package = "SouthAfricaDrought")
+temp1 <- system.file("data-raw", "SouthAfrica_Boundary.shp", package = "SouthAfricaDrought", mustWork = TRUE)
 boundary <- st_read(dsn = temp1)
 ```
 # Methods
