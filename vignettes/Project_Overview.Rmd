@@ -16,13 +16,16 @@ knitr::opts_chunk$set(
 
 # Description
 ```{r setup}
+setwd("C:/Users/Emily/Documents/Fall_2020/Geospatial_R/SouthAfricaDrought")
+
 library(SouthAfricaDrought)
 library(geospaar)
 library(sf)
 library(rgdal)
 
-temp1 <- system.file("data-raw", "SouthAfrica_Boundary.shp", package = "SouthAfricaDrought", mustWork = TRUE)
-boundary <- st_read(dsn = temp1)
+boundary <- read_sf(dsn = "C:/Users/Emily/Documents/Fall_2020/Geospatial_R/SouthAfricaDrought/data-raw", layer = "SouthAfrica_Boundary")
+
+plot(boundary)
 ```
 # Methods
 
