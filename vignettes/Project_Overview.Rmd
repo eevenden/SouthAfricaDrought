@@ -30,9 +30,9 @@ print(boundary$geometry)
 
 farmers <- read_csv(system.file("extdata/farmer_spatial.csv", package = "geospaar")) %>% distinct(uuid, x, y, date, season, rained, planted)
 
-unique(farmers$date)
 
 #Load worldclim data
+
 
 #load raster imagery
 b <- brick(file.path("C:/Users/Emily/Documents/Fall_2020/Geospatial_R", "noid_image_2020_11_09_14_59_55_2020_11_09_14_59_56.tif"))
