@@ -27,6 +27,7 @@ Use the SMS survey and co-located sensor rainfall data to identify mid-season dr
 
 #Primary Objectives:
 #Develop metric system for determining area-specific drought
+
 ```{r setup}
 library(SouthAfricaDrought)
 library(geospaar)
