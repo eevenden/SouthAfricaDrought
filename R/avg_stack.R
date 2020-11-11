@@ -17,9 +17,9 @@ avg_stack <- function(x, y, boundary, aa){
   
   boundary <- st_transform(boundary, crs = st_crs(s[[1]]))
   
-  new_s <- crop(s, boundary)
+  new_s <- crop(s, boundary) %>% calc(., function(x) (x * 0.02)-273)
   
-  temp_zmu <- calc(x = new_s, fun = mean)
+  temp_zmu <- calc(x = new_s, fun = mean, na.rm = TRUE)
   
   writeRaster(temp_zmu, filename = file.path(x, aa))
 }
