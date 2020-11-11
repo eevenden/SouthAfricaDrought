@@ -27,10 +27,10 @@ library(sf)
 library(rgdal)
 library(raster)
 
-setwd("C:/Users/Emily/Documents/Fall_2020/Geospatial_R/SouthAfricaDrought")
+#setwd("C:/Users/Emily/Documents/Fall_2020/Geospatial_R/SouthAfricaDrought")
 #Load farmer data
-fs <- system.file("data-raw/SouthAfrica_Boundary.shp", package = "SouthAfricaDrought") %>% st_read()
-boundary <- roads <- st_read(dsn = fs)
+#fs <- system.file("data-raw/SouthAfrica_Boundary.shp", package = "SouthAfricaDrought") %>% st_read()
+#boundary <- roads <- st_read(dsn = fs)
 
 ```
 
