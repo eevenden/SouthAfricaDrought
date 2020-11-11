@@ -7,6 +7,6 @@
 #'  \item{Year}{A value between 1924 and 2015.}
 #' @examples
 #' \dontrun{
-#'  
+#' SouthAfrica_Boundary
 #' }
 "SouthAfrica_Boundary"
