@@ -35,20 +35,22 @@ library(sf)
 library(rgdal)
 library(raster)
 
-#setwd("C:/Users/Emily/Documents/Fall_2020/Geospatial_R/SouthAfricaDrought")
-#Load farmer data
-#fs <- system.file("data-raw/SouthAfrica_Boundary.shp", package = "SouthAfricaDrought") %>% st_read()
-#boundary <- roads <- st_read(dsn = fs)
+boundary <- system.file("data/SouthAfrica_Boundary.shp", package = "SouthAfricaDrought") %>% st_read()
+
+temperature <- system.file("data/SA_MODIS_Monthly_Mean_Temp.tif", package = "SouthAfricaDrought") %>% stack()
+names(temperature) <- c("Nov_2019", "Dec_2019", "Jan_2020", "Feb_2020", "March_2020")
+
+#precip
+
+#reproject data 
 
 ```
 
 # Methods
 
-- Deciles - recommended by drought.gov
+- Deciles - recommended by drought.gov, cut the pixels into cateogries of rainfall - deciles 
 
-- NOAA Drought Index - also recommended by drought.gov
-
-- Temperature above monthly average
+- Temperature above climatic monthly average?
 
 - EVI - Remote Sensing indicator for vegetation health
 
