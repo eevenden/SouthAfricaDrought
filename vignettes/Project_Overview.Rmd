@@ -20,6 +20,13 @@ Use the SMS survey and co-located sensor rainfall data to identify mid-season dr
 
 
 # Description
+
+#Summary
+
+#In this project we aim to identify bouts of drought in South Africa over the period of 2008 and 2011. Drought will be determined by persisting stretches of no rainfall within a predetermined season. Our threshold for drought will be based on the Palmer Drought Severity Index (PDSI) with key components: temperature and precipitation. The PDSI indicates drought as a range -10 (dry) to 10 (wet) atmosphere, thus we are able to grade drought conditions to more desirable moist conditions. In this project, we aim to design a metric for determining drought spans in South African farms. The importance of this project is aligned to food security goals as planning for adverse or dry spells can be achieved with the information provided by our metric system. Timing of farming activities will also be optimised to produce the optimum yield per area utilised. 
+
+#Primary Objectives:
+#Develop metric system for determining area-specific drought
 ```{r setup}
 library(SouthAfricaDrought)
 library(geospaar)
