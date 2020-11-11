@@ -38,7 +38,12 @@ boundary <- read_sf(dsn = "C:/Users/Emily/Documents/Fall_2020/Geospatial_R/South
 
 # Methods
 
-- Calculate drought indices
+- Deciles - recommended by drought.gov
+
+- NOAA Drought Index - also recommended by drought.gov 
+
+- EVI - Remote Sensing indicator for vegetation health
+
 
 # Data Visualization
 
