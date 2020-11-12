@@ -27,6 +27,11 @@ Use the SMS survey and co-located sensor rainfall data to identify mid-season dr
 
 #Primary Objectives:
 #Develop metric system for determining area-specific drought
+
+
+#Approach and Method:
+
+#For the task of demonstrating the utility of a metric system for identifying periods of drought we obtained datasets for temperature and precipitation from Google Earth Engine (GEE) geodatabase. Following this, the datasets were clipped in R to the extent of the study area, South Africa. A function for calculating mean monthly amounts for the variables was applied on temperature and precipitation datasets and units converted where appropriate: Kelvin to degree Celsius. The next geoprocessing of the datasets was done in raster layers, and included calculating the mean of pixels throughout the months to produce a new output file.
 ```{r setup}
 library(SouthAfricaDrought)
 library(geospaar)
