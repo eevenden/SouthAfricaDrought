@@ -7,7 +7,7 @@
 #' @param aa output file name
 #' @export
 #' @examples
-#' monthly_temp("C:/Users/Emily/Documents/Fall_2020/Geospatial_R/MODIS_Temp", "2020_01.*\\.tif", SA, "2020_01_mean_temp.tif")
+#' avg_stack("C:/Users/Emily/Documents/Fall_2020/Geospatial_R/MODIS_Temp", "2020_01.*\\.tif", SA, "2020_01_mean_temp.tif")
 #' 
 avg_stack <- function(x, y, boundary, aa){
   
