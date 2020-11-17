@@ -52,7 +52,13 @@ boundary <- roads <- st_read(dsn = fs)
 
 - NOAA Drought Index - also recommended by drought.gov
 
+<<<<<<< HEAD
 - Temperature above monthly average
+=======
+- NOAA -  Mean precipitation for each week is calculated and a running eight-week average of measured average precipitation is summed and compared. If the actual precipitation is greater than 60% of the normal precipitation for the eight-week period, then the current week is assumed to have little or no water stress. If stress is detected, it remains until the actual precipitation is at 60% or more of normal.
+
+- Temperature above climatic monthly average?
+>>>>>>> Emily
 
 - EVI - Remote Sensing indicator for vegetation health
 
