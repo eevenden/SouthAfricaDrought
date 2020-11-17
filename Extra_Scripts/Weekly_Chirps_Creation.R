@@ -4,7 +4,8 @@ library(sf)
 library(dplyr)
 
 
-SA <- system.file("data/SouthAfrica_Boundary.shp", package = "SouthAfricaDrought") %>% st_read()
+SA <- system.file("extdata/SouthAfrica_Boundary.shp",
+                  package = "SouthAfricaDrought") %>% st_read()
 
 fs <- dir("C:/Users/Emily/Documents/Fall_2020/Geospatial_R/Chirps/SouthAfrica_Imagery/SouthAfrica_Imagery", pattern = "SA.*\\.tif", full.names = TRUE)
 fs
