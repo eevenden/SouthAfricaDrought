@@ -50,6 +50,8 @@ names(temperature) <- c("Nov_2019", "Dec_2019", "Jan_2020", "Feb_2020", "March_2
 
 - Deciles - recommended by drought.gov, cut the pixels into cateogries of rainfall - deciles 
 
+- NOAA -  Mean precipitation for each week is calculated and a running eight-week average of measured average precipitation is summed and compared. If the actual precipitation is greater than 60% of the normal precipitation for the eight-week period, then the current week is assumed to have little or no water stress. If stress is detected, it remains until the actual precipitation is at 60% or more of normal.
+
 - Temperature above climatic monthly average?
 
 - EVI - Remote Sensing indicator for vegetation health
