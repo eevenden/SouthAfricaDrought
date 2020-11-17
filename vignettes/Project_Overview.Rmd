@@ -41,9 +41,8 @@ library(raster)
 
 # setwd("C:/Users/Emily/Documents/Fall_2020/Geospatial_R/SouthAfricaDrought")
 #Load farmer data
-fs <- system.file("extdata/SouthAfrica_Boundary.shp", 
-                  package = "SouthAfricaDrought")
-boundary <- roads <- st_read(dsn = fs)
+fs <- system.file("extdata/roads.shp", package = "geospaar") %>% st_read()
+boundary <- st_read(dsn = fs)
 
 ```
 

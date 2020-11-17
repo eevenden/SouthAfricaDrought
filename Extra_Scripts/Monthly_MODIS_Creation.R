@@ -4,10 +4,10 @@ library(sf)
 library(dplyr)
 
 
-SA <- read_sf(dsn = "C:/Users/Emily/Documents/Fall_2020/Geospatial_R/SouthAfricaDrought/data-raw", layer = "SouthAfrica_Boundary")
+SA <- read_sf(dsn = "C:/Users/Emily/Documents/Fall_2020/Geospatial_R/SouthAfricaDrought/data", layer = "SouthAfrica_Boundary")
 crs(boundary)
 
-fs <- dir("C:/Users/Emily/Documents/Fall_2020/Geospatial_R/MODIS_Temp", pattern = "*mean*", full.names = TRUE)
+fs <- dir("C:/Users/Emily/Documents/Fall_2020/Geospatial_R/MODIS_Temp", pattern = "*SA*", full.names = TRUE)
 
 l <- lapply(fs, raster)
 
