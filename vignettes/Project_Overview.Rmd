@@ -47,7 +47,8 @@ boundary <- system.file("extdata/SouthAfrica_Boundary.shp", package = "SouthAfri
 plot(boundary)
 
 #Load monthly data
-
+weekly_prec <- system.file("extdata/SA_Chirps_Monthly_Mean_Precip.tif", package = "SouthAfricaDrought") %>% stack() %>% projectRaster(., crs = afalb)
+                                                                                                                                     
 #Load weekly precipitation values (mm) and reprojects to Hartebeesthoek94
 weekly_prec <- system.file("extdata/SA_Chirps_Weekly_Mean_Precip.tif", package = "SouthAfricaDrought") %>% stack() %>% projectRaster(., crs = afalb)
 
