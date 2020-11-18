@@ -39,28 +39,62 @@ library(sf)
 library(rgdal)
 library(raster)
 
-# setwd("C:/Users/Emily/Documents/Fall_2020/Geospatial_R/SouthAfricaDrought")
-#Load farmer data
-fs <- system.file("extdata/roads.shp", package = "geospaar") %>% st_read()
-boundary <- st_read(dsn = fs)
+afalb <- paste0("+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 ", "+y_0=0 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs")
 
+#Load South Africa boundary and reprojects to Hartebeesthoek94
+boundary <- system.file("extdata/SouthAfrica_Boundary.shp", package = "SouthAfricaDrought") %>% st_read() %>% st_transform(x = ., crs = afalb)
+
+plot(boundary)
+
+#Load monthly data
+monthly_prec <- system.file("extdata/SA_Chirps_Monthly_Mean_Precip.tif", package = "SouthAfricaDrought") %>% stack() %>% projectRaster(., crs = crs(boundary))
+
+#Load weekly precipitation values (mm) and reprojects to Hartebeesthoek94
+weekly_prec <- system.file("extdata/SA_Chirps_Weekly_Mean_Precip.tif", package = "SouthAfricaDrought") %>% stack() %>% projectRaster(., crs = crs(boundary))
+
+#Rename precipitation layers according to the data range of each image
+names(weekly_prec) <- c('week1_2019-10-27_2019-11-02',
+                        'week2_2019-11-17_2019-11-23',
+                        'week3_2019-11-24_2019-11-30',
+                        'week4_2019-12-01_2019-12-07',
+                        'week5_2019-12-08_2019-12-14',
+                        'week6_2019-12-15_2019-12-21',
+                        'week7_2019-12-22_2019-12-28',
+                        'week8_2019-12-29_2019-01-05',
+                        'week9_2019-01-06_2019-01-12',
+                        'week10_2019-01-13_2019-01-19',
+                        'week11_2019-01-20_2019-01-26',
+                        'week12_2019-01-27_2019-02-02',
+                        'week13_2019-02-03_2019-02-09',
+                        'week14_2019-02-10_2019-02-16',
+                        'week15_2019-02-17_2019-02-23',
+                        'week16_2019-02-24_2019-03-02',
+                        'week17_2019-03-10_2019-03-16',
+                        'week18_2019-03-17_2019-02-23',
+                        'week19_2019-03-24_2019-03-30',
+                        'week20_2019-03-31_2019-04-06',
+                        'week21_2019-04-07_2019-04-13',
+                        'week22_2019-04-14_2019-04-20',
+                        'week23_2019-02-21_2019-02-27')
+
+q1 <- calc(weekly_prec, fun=function(x) quantile(x, c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1), na.rm=TRUE))
+
+q1
+plot(q1)
 ```
 
 # Methods
 
 - Deciles - recommended by drought.gov
 
-- NOAA Drought Index - also recommended by drought.gov
-
-<<<<<<< HEAD
-- Temperature above monthly average
-=======
-- NOAA -  Mean precipitation for each week is calculated and a running eight-week average of measured average precipitation is summed and compared. If the actual precipitation is greater than 60% of the normal precipitation for the eight-week period, then the current week is assumed to have little or no water stress. If stress is detected, it remains until the actual precipitation is at 60% or more of normal.
+- NOAA Drought Index -  Mean precipitation for each week is calculated and a running eight-week average of measured average precipitation is summed and compared. If the actual precipitation is greater than 60% of the normal precipitation for the eight-week period, then the current week is assumed to have little or no water stress. If stress is detected, it remains until the actual precipitation is at 60% or more of normal.
 
 - Temperature above climatic monthly average?
->>>>>>> Emily
 
-- EVI - Remote Sensing indicator for vegetation health
+```{r, error= TRUE}
+
+
+```
 
 
 # Data Visualization
