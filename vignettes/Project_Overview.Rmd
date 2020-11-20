@@ -48,7 +48,8 @@ plot(boundary)
 
 #Load monthly data
 monthly_prec <- system.file("extdata/SA_Chirps_Monthly_Mean_Precip.tif", package = "SouthAfricaDrought") %>% stack() %>% projectRaster(., crs = afalb)
-                                                                                                                                     
+                                                                                                                              names(monthly_prec) <- c('Nov_2019', 'Dec_2019', 'Jan_2020', 'Feb_2020', 'March_2020')
+plot(monthly_prec)                                                                                                                              
 #Load weekly precipitation values (mm) and reprojects to Hartebeesthoek94
 weekly_prec <- system.file("extdata/SA_Chirps_Weekly_Mean_Precip.tif", package = "SouthAfricaDrought") %>% stack() %>% projectRaster(., crs = afalb)
 
@@ -77,23 +78,23 @@ names(weekly_prec) <- c('week1_2019-10-27_2019-11-02',
                         'week22_2019-04-14_2019-04-20',
                         'week23_2019-02-21_2019-02-27')
 
-q1 <- calc(weekly_prec, fun=function(x) quantile(x, c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1), na.rm=TRUE))
-
-q1
-plot(q1)
 ```
 
-# Methods
+## Methods
 
-- Deciles - recommended by drought.gov
+- Deciles
 
 - NOAA Drought Index -  Mean precipitation for each week is calculated and a running eight-week average of measured average precipitation is summed and compared. If the actual precipitation is greater than 60% of the normal precipitation for the eight-week period, then the current week is assumed to have little or no water stress. If stress is detected, it remains until the actual precipitation is at 60% or more of normal.
 
 - Temperature above climatic monthly average?
 
 ```{r, error= TRUE}
+#Deciles
+q1 <- quantile(monthly_prec, c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1), na.rm=TRUE)
 
+q1
 
+#NOAA Drough Index
 ```
 
 
