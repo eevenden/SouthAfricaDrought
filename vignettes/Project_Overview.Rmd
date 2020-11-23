@@ -14,24 +14,38 @@ knitr::opts_chunk$set(
 )
 ```
 
-Project Prompt
 
-Use the SMS survey and co-located sensor rainfall data to identify mid-season dry-spells of potential agricultural significance. For example, two or more consecutive rainless weeks close to maize flowering or grain-filling times. Can you detect a signficant drop in farmers’ anticipated harvest amounts around such events (we might expect a sudden drop in expected harvest amounts)? How about a significant change in the rate of reduction in farmers’ reported maize storage levels fall (if farmers are concerned about crop loss, they might slow their rate of consumption of stored food)?
-
-
-# Description
+# Project Overview
+## Authors: Emily Evenden and Maseeng Masitha
+## Date: November 23rd, 2020
 
 ## Summary
 
-In this project we aim to identify bouts of drought in South Africa over the period of 2008 and 2011. Drought will be determined by persisting stretches of no rainfall within a predetermined season. In this project, we aim to design a metric for determining drought spans in South African farms. The importance of this project is aligned to food security goals as planning for adverse or dry spells can be achieved with the information provided by our metric system. Timing of farming activities will also be optimised to produce the optimum yield per area utilised. 
+We aim to identify bouts of drought in South Africa over the summer season of November, 2019, to March, 2020. Drought will be determined by persisting stretches of no rainfall. We will use two drought indices which rely solely on rainfall data: the Deciles Drought Index and the NOAA Drought Index to identify areas of South Africa expericning drought. Through this project, we hope to program easy drought metrics for South Africa which could be used to determine early warnings of low crop yields.
 
-# Primary Objectives:
+# Primary Objectives
 
-Develop metric system for determining area-specific drought
+- Make long-term and short-term rainfall data available to the user in both monthly and weekly time intervals
+- Program two drought indices
+- Identify areas in South Africa that experienced drought last summer (2019-2020).
 
-# Approach and Method:
+# Approach and Method
+## Data
 
-For the task of demonstrating the utility of a metric system for identifying periods of drought we obtained datasets for temperature and precipitation from Google Earth Engine (GEE) geodatabase. Following this, the datasets were clipped in R to the extent of the study area, South Africa. A function for calculating mean monthly amounts for the variables was applied on temperature and precipitation datasets and units converted where appropriate: Kelvin to degree Celsius. The next geoprocessing of the datasets was done in raster layers, and included calculating the mean of pixels throughout the months to produce a new output file.
+This data contains five datasets:
+
+  - SouthAfrica_Boundary - a vector file containing the boundary of South Africa
+  
+  - SA_MODIS_Monthly_Mean_Temperature - a raster stack of the average monthly temperature (in Celsius) for South Africa. This dataset is not currently used in any of the indices we created, but is available for future use if more indicies are added.
+  
+  - SA_Chirps_Weekly_Mean_Precip & SA_Chirps_Monthly_Mean_Precip - these datasets are two different aggregations of the daily Chirps precipitation data. Obviously, the weekly data is aggregated by week while the monthly data is aggregated by month. The unit of this dataset is mm of rainfall per day.
+  
+  - SA_Chirps_10yr_Monthly_Mean_Precip - this datasets is also dervied from the Chirps daily precipitation dataset. Each raster layer in this dataset shows the ten year average of rainfall for that month. The data range for this data is April 1, 2008 to March 31, 2018. 
+
+
+We obtained datasets for temperature and precipitation from Google Earth Engine (GEE) database. Specifically, we utilized the "Chirps Daily: Climate Hazards Group Infrared Precipitation" dataset and the "Terra Land Surface Temperature and Emissivity Daily Global 1km" dataset. These datasets were filtered by data and location and reduced using the mean function via the Javascript Code Editor available online through GEE. Once selected, the data was exported to Google Drive.  
+
+Finally data preprocessing was conducted using R. Following this, the datasets were clipped in R to the extent of the study area, South Africa. A function for calculating mean monthly amounts for the variables was applied on temperature and precipitation datasets and units converted where appropriate: Kelvin to degree Celsius. The next geoprocessing of the datasets was done in raster layers, and included calculating the mean of pixels throughout the months to produce a new output file.
 
 ```{r setup, error=TRUE}
 library(SouthAfricaDrought)
@@ -47,11 +61,16 @@ boundary <- system.file("extdata/SouthAfrica_Boundary.shp", package = "SouthAfri
 
 plot(boundary)
 
-#Load monthly data
+#Load long-term monthly data
+lt_monthly_prec <- system.file("extdata/SA_Chirps_10yr_Monthly_Mean_Precip.tif", package = "SouthAfricaDrought") %>% stack() %>% projectRaster(., crs = afalb)
+
+names(lt_monthly_prec) <- c('Nov_08_18', 'Dec_08_18', 'Jan_08_18', 'Feb_08_18', 'March_08_18')
+                              
+#Load summer monthly data
 monthly_prec <- system.file("extdata/SA_Chirps_Monthly_Mean_Precip.tif", package = "SouthAfricaDrought") %>% stack() %>% projectRaster(., crs = afalb)
                                                                                                                               names(monthly_prec) <- c('Nov_2019', 'Dec_2019', 'Jan_2020', 'Feb_2020', 'March_2020')
 plot(monthly_prec)                                                                                                                              
-#Load weekly precipitation values (mm) and reprojects to Hartebeesthoek94
+#Load summer weekly precipitation values (mm) and reprojects to Hartebeesthoek94
 weekly_prec <- system.file("extdata/SA_Chirps_Weekly_Mean_Precip.tif", package = "SouthAfricaDrought") %>% stack() %>% projectRaster(., crs = afalb)
 
 #Rename precipitation layers according to the data range of each image
