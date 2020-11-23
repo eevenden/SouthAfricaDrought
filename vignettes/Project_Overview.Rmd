@@ -23,15 +23,16 @@ Use the SMS survey and co-located sensor rainfall data to identify mid-season dr
 
 ## Summary
 
-In this project we aim to identify bouts of drought in South Africa over the period of 2008 and 2011. Drought will be determined by persisting stretches of no rainfall within a predetermined season. Our threshold for drought will be based on the Palmer Drought Severity Index (PDSI) with key components: temperature and precipitation. The PDSI indicates drought as a range -10 (dry) to 10 (wet) atmosphere, thus we are able to grade drought conditions to more desirable moist conditions. In this project, we aim to design a metric for determining drought spans in South African farms. The importance of this project is aligned to food security goals as planning for adverse or dry spells can be achieved with the information provided by our metric system. Timing of farming activities will also be optimised to produce the optimum yield per area utilised. 
+In this project we aim to identify bouts of drought in South Africa over the period of 2008 and 2011. Drought will be determined by persisting stretches of no rainfall within a predetermined season. In this project, we aim to design a metric for determining drought spans in South African farms. The importance of this project is aligned to food security goals as planning for adverse or dry spells can be achieved with the information provided by our metric system. Timing of farming activities will also be optimised to produce the optimum yield per area utilised. 
 
 # Primary Objectives:
-Develop metric system for determining area-specific drought
 
+Develop metric system for determining area-specific drought
 
 # Approach and Method:
 
 For the task of demonstrating the utility of a metric system for identifying periods of drought we obtained datasets for temperature and precipitation from Google Earth Engine (GEE) geodatabase. Following this, the datasets were clipped in R to the extent of the study area, South Africa. A function for calculating mean monthly amounts for the variables was applied on temperature and precipitation datasets and units converted where appropriate: Kelvin to degree Celsius. The next geoprocessing of the datasets was done in raster layers, and included calculating the mean of pixels throughout the months to produce a new output file.
+
 ```{r setup, error=TRUE}
 library(SouthAfricaDrought)
 library(geospaar)
@@ -84,11 +85,9 @@ names(weekly_prec) <- c('week1_2019-10-27_2019-11-02',
 
 - Deciles
 
-- NOAA Drought Index -  Mean precipitation for each week is calculated and a running eight-week average of measured average precipitation is summed and compared. If the actual precipitation is greater than 60% of the normal precipitation for the eight-week period, then the current week is assumed to have little or no water stress. If stress is detected, it remains until the actual precipitation is at 60% or more of normal.
-
-- Temperature above climatic monthly average?
 
 ```{r, error= TRUE}
+#write out code here and explain
 #Deciles
 q1 <- quantile(monthly_prec, c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1), na.rm=TRUE)
 
@@ -97,7 +96,25 @@ q1
 #NOAA Drough Index
 ```
 
+- NOAA Drought Index -  Mean precipitation for each week is calculated and a running eight-week average of measured average precipitation is summed and compared. If the actual precipitation is greater than 60% of the normal precipitation for the eight-week period, then the current week is assumed to have little or no water stress. If stress is detected, it remains until the actual precipitation is at 60% or more of normal.
+
+```{r, error= TRUE}
+
+
+#NOAA Drough Index
+```
 
 # Data Visualization
+```{r, error = TRUE}
+#Display final maps of drought
+
+
+```
+
 
 # Results
+```{r, error=TRUE}
+#Calculate area of drought?
+
+```
+
