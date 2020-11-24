@@ -58,16 +58,18 @@ afalb <- paste0("+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 ", "+y
 #Load South Africa boundary and reprojects to Hartebeesthoek94
 boundary <- system.file("extdata/SouthAfrica_Boundary.shp", package = "SouthAfricaDrought") %>% st_read() %>% st_transform(x = ., crs = afalb)
 
-#Load long-term monthly data
-lt_monthly_prec <- system.file("extdata/SA_Chirps_10yr_Monthly_Mean_Precip.tif", package = "SouthAfricaDrought") %>% stack() %>% projectRaster(., crs = afalb)
-
+#Load long-term monthly data and reprojects custom projection for SA
+lt_monthly_prec <- system.file("extdata/SA_30yr_LT_Mean_Precip.tif", package = "SouthAfricaDrought") %>% stack() %>% projectRaster(., crs = afalb)
+lt_monthly_prec
 names(lt_monthly_prec) <- c('Nov_87_17', 'Dec_87_17', 'Jan_88_18', 'Feb_88_18', 'March_88_18')
                               
-#Load summer monthly data
+#Load summer monthly data and reprojects custom projection for SA
 monthly_prec <- system.file("extdata/SA_Chirps_Monthly_Mean_Precip.tif", package = "SouthAfricaDrought") %>% stack() %>% projectRaster(., crs = afalb)
-                                                                                                                              names(monthly_prec) <- c('Nov_2019', 'Dec_2019', 'Jan_2020', 'Feb_2020', 'March_2020')
+
+
+                                                                                                                          names(monthly_prec) <- c('Nov_2019', 'Dec_2019', 'Jan_2020', 'Feb_2020', 'March_2020')
 plot(monthly_prec)                                                                                                                              
-#Load summer weekly precipitation values (mm) and reprojects to Hartebeesthoek94
+#Load summer weekly precipitation values (mm) and reprojects custom projection for SA
 weekly_prec <- system.file("extdata/SA_Chirps_Weekly_Mean_Precip.tif", package = "SouthAfricaDrought") %>% stack() %>% projectRaster(., crs = afalb)
 
 #Rename precipitation layers according to the data range of each image
