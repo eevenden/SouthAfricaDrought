@@ -4,9 +4,9 @@
 #' @param x rasterstack containing weekly precipitation data
 #' @export
 #' @examples
-#' water_stress(weekly_mean_precip)
+#' noaa_class(weekly_mean_precip)
 #'
-water_stress <- function(x){
+noaa_class <- function(x){
   
   m <- c(0, 0.6, NA,  0.6, Inf, 1)
   
