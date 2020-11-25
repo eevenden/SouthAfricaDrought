@@ -14,5 +14,4 @@ water_stress <- function(x){
   
   rc <- reclassify(x, rclmat)
   
-  return(stack(lapply(1:nlayers(x), function(i){water_stress(x[[i]])})))
 } 
