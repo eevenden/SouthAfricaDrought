@@ -52,6 +52,9 @@ library(geospaar)
 library(sf)
 library(rgdal)
 library(raster)
+library(shiny)
+library(shinydashboard)
+library(leaflet)
 
 afalb <- paste0("+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 ", "+y_0=0 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs")
 
@@ -131,13 +134,56 @@ The NOAA Drought Index is also a precipitation based index. This index utilized 
 Information source: https://www.droughtmanagement.info/noaa-drought-index-ndi/
 
 ```{r, error= TRUE}
-#NOAA Drought Index
+result_list <- list()
+
+noaa_stack <- noaa_drought(weekly_prec, result_list) %>% stack()
+
+
 ```
 
 # Data Visualization
 ```{r, error = TRUE}
 #Display final maps of drought -- times series of drought areas?
 
+
+
+ui <- fluidPage(
+
+  titlePanel("Weekly NOAA Drought Monitoring"),
+
+  # Sidebar layout with input and output definitions ----
+  sidebarLayout(
+
+    # Sidebar panel for inputs ----
+    sidebarPanel(
+
+      sliderInput(inputId = "bins", label = "week", min = 1, max = nlayers(noaa_stack), value = 1)
+    ),
+
+    # Main panel for displaying outputs ----
+    mainPanel(
+
+      # Output: Histogram ----
+      leafletOutput(outputId = "Raster")
+    )
+  )
+)
+
+server <- function(input, output) {
+
+  output$Raster <- renderLeaflet({
+
+    m <- c(0, 0.6, NA,  0.6, Inf, 1)
+    rclmat <- matrix(m, ncol=3, byrow=TRUE)
+    rc <- reclassify(noaa_stack, rclmat)
+
+    leaflet() %>% addRasterImage(rc)
+
+  })
+
+}
+
+shinyApp(ui, server)
 
 ```
 
