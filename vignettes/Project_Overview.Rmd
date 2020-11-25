@@ -138,7 +138,6 @@ result_list <- list()
 
 noaa_stack <- noaa_drought(weekly_prec, result_list) %>% stack()
 
-
 ```
 
 # Data Visualization

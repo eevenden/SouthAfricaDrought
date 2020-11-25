@@ -8,7 +8,7 @@
 #'
 noaa_class <- function(x){
   
-  m <- c(0, 0.6, NA,  0.6, Inf, 1)
+  m <- c(0, 0.6, 1,  0.6, Inf, NA)
   
   rclmat <- matrix(m, ncol=3, byrow=TRUE)
   
