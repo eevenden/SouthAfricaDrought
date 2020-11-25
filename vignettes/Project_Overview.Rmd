@@ -77,7 +77,7 @@ plot(monthly_prec)
 weekly_prec <- system.file("extdata/SA_Chirps_Weekly_Mean_Precip.tif", package = "SouthAfricaDrought") %>% stack() %>% projectRaster(., crs = afalb)
 
 #Rename precipitation layers according to the data range of each image
-names(weekly_prec) <- c('week1_2019-10-27_2019-11-02',
+week_names <- c('week1_2019-10-27_2019-11-02',
                         'week2_2019-11-17_2019-11-23',
                         'week3_2019-11-24_2019-11-30',
                         'week4_2019-12-01_2019-12-07',
@@ -100,6 +100,7 @@ names(weekly_prec) <- c('week1_2019-10-27_2019-11-02',
                         'week21_2019-04-07_2019-04-13',
                         'week22_2019-04-14_2019-04-20',
                         'week23_2019-02-21_2019-02-27')
+names(weekly_prec) <- week_names
 
 ```
 
@@ -134,10 +135,29 @@ The NOAA Drought Index is also a precipitation based index. This index utilized 
 Information source: https://www.droughtmanagement.info/noaa-drought-index-ndi/
 
 ```{r, error= TRUE}
+
 result_list <- list()
 
 noaa_stack <- noaa_drought(weekly_prec, result_list) %>% stack()
 
+noaa_class_stack <- SouthAfricaDrought::noaa_class(noaa_stack)
+
+names(noaa_class_stack) <- c('week9',
+                             'week10',
+                             'week11',
+                             'week12',
+                             'week13',
+                             'week14',
+                             'week15',
+                             'week16',
+                             'week17',
+                             'week18',
+                             'week19',
+                             'week20',
+                             'week21',
+                             'week22')
+                             #'week23_2019-02-21_2019-02-27'
+plot(noaa_class_stack)
 ```
 
 # Data Visualization
@@ -146,43 +166,6 @@ noaa_stack <- noaa_drought(weekly_prec, result_list) %>% stack()
 
 
 
-ui <- fluidPage(
-
-  titlePanel("Weekly NOAA Drought Monitoring"),
-
-  # Sidebar layout with input and output definitions ----
-  sidebarLayout(
-
-    # Sidebar panel for inputs ----
-    sidebarPanel(
-
-      sliderInput(inputId = "bins", label = "week", min = 1, max = nlayers(noaa_stack), value = 1)
-    ),
-
-    # Main panel for displaying outputs ----
-    mainPanel(
-
-      # Output: Histogram ----
-      leafletOutput(outputId = "Raster")
-    )
-  )
-)
-
-server <- function(input, output) {
-
-  output$Raster <- renderLeaflet({
-
-    m <- c(0, 0.6, NA,  0.6, Inf, 1)
-    rclmat <- matrix(m, ncol=3, byrow=TRUE)
-    rc <- reclassify(noaa_stack, rclmat)
-
-    leaflet() %>% addRasterImage(rc)
-
-  })
-
-}
-
-shinyApp(ui, server)
 
 ```
 
