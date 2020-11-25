@@ -25,5 +25,6 @@ noaa_drought <- function(weekly_prec, list){
     i = i + 1
     x = x + 1
   }
+  return(list)
 
 }
