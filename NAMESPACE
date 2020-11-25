@@ -2,3 +2,4 @@
 
 export(avg_stack)
 export(crop_stack)
+export(noaa_drought)
