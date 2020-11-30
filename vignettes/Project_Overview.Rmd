@@ -1,10 +1,7 @@
 ---
 title: "Project_Overview"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Project_Overview}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+output: html_document
+runtime: shiny
 ---
 
 ```{r, include = FALSE}
@@ -46,7 +43,8 @@ We obtained datasets for temperature and precipitation from Google Earth Engine 
 
 Finally data preprocessing was conducted using R. Following this, the datasets were clipped in R to the extent of the study area, South Africa. A function for calculating mean monthly amounts for the variables was applied on temperature and precipitation datasets and units converted where appropriate: Kelvin to degree Celsius. The next geoprocessing of the datasets was done in raster layers, and included calculating the mean of pixels throughout the months to produce a new output file.
 
-```{r setup, error=TRUE}
+```{r setup, error=TRUE, echo = FALSE, message=FALSE}
+
 library(SouthAfricaDrought)
 library(geospaar)
 library(sf)
@@ -55,6 +53,7 @@ library(raster)
 library(shiny)
 library(shinydashboard)
 library(leaflet)
+library(ggplot2)
 
 afalb <- paste0("+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 ", "+y_0=0 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs")
 
@@ -100,6 +99,7 @@ week_names <- c('week1_2019-10-27_2019-11-02',
                         'week21_2019-04-07_2019-04-13',
                         'week22_2019-04-14_2019-04-20',
                         'week23_2019-02-21_2019-02-27')
+
 names(weekly_prec) <- week_names
 
 ```
@@ -118,7 +118,7 @@ The Deciles index compares precipitation from a specific time interval with prec
 
 Information source: https://agrimetsoft.com/faq/What%20is%20DI(Deciles%20Index)
 
-```{r, error= TRUE}
+```{r, error= TRUE, echo = FALSE, message=FALSE}
 #write out code here and explain
 #Deciles
 q1 <- quantile(monthly_prec, c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1), na.rm=TRUE)
@@ -134,7 +134,7 @@ The NOAA Drought Index is also a precipitation based index. This index utilized 
 
 Information source: https://www.droughtmanagement.info/noaa-drought-index-ndi/
 
-```{r, error= TRUE}
+```{r, error= TRUE, echo = FALSE, message=FALSE}
 
 result_list <- list()
 
@@ -142,30 +142,83 @@ noaa_stack <- noaa_drought(weekly_prec, result_list) %>% stack()
 
 noaa_class_stack <- SouthAfricaDrought::noaa_class(noaa_stack)
 
-names(noaa_class_stack) <- c('week9',
-                             'week10',
-                             'week11',
-                             'week12',
-                             'week13',
-                             'week14',
-                             'week15',
-                             'week16',
-                             'week17',
-                             'week18',
-                             'week19',
-                             'week20',
-                             'week21',
-                             'week22')
+names(noaa_class_stack) <- c('Week 9',
+                             'Week 10',
+                             'Week 11',
+                             'Week 12',
+                             'Week 13',
+                             'Week 14',
+                             'Week 15',
+                             'Week 16',
+                             'Week 17',
+                             'Week 18',
+                             'Week 19',
+                             'Week 20',
+                             'Week 21',
+                             'Week 22')
                              #'week23_2019-02-21_2019-02-27'
-plot(noaa_class_stack)
+                             
+noaa_class_stack
+
+
 ```
 
 # Data Visualization
-```{r, error = TRUE}
+
+```{r, echo = FALSE, message=FALSE}
 #Display final maps of drought -- times series of drought areas?
 
+shiny_data <- noaa_class_stack
+
+shinyApp(ui <- fluidPage(
+  
+  titlePanel("Weekly Raster"),
+
+  # Sidebar layout with input and output definitions ----
+  sidebarLayout(
+
+    # Sidebar panel for inputs ----
+    sidebarPanel(
+
+      sliderInput(inputId = "slider", label = "Week", min = 0, max = 14, value = 1)
+    ),
+
+    # Main panel for displaying outputs ----
+    mainPanel(
+
+      # Output:
+      leafletOutput("Raster", width = "100%")
+    )
+  )),
 
 
+server <- function(input, output, session) {
+
+  output$Raster <- renderLeaflet({
+    
+    leaflet() %>% addTiles() %>% setView(lat= -29, lng=24, zoom = 5) %>% addRasterImage(df_filtered())
+
+  })
+  
+  df_filtered <- reactive({
+        shiny_data[[input$slider]]
+        })
+  
+  observe({
+
+        leafletProxy(mapId = "Raster") %>% clearImages() %>% addRasterImage(df_filtered())
+  })
+  
+  autoInvalidate <- reactiveTimer(10000)
+  
+  observe({
+    autoInvalidate()
+    cat(".")
+  })
+  
+  options = list(height = 800)
+
+})
 
 ```
 
