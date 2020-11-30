@@ -43,7 +43,7 @@ We obtained datasets for temperature and precipitation from Google Earth Engine 
 
 Finally data preprocessing was conducted using R. Following this, the datasets were clipped in R to the extent of the study area, South Africa. A function for calculating mean monthly amounts for the variables was applied on temperature and precipitation datasets and units converted where appropriate: Kelvin to degree Celsius. The next geoprocessing of the datasets was done in raster layers, and included calculating the mean of pixels throughout the months to produce a new output file.
 
-```{r setup, error=TRUE, echo = FALSE, message=FALSE}
+```{r setup, error=TRUE, echo = FALSE, message = FALSE}
 
 library(SouthAfricaDrought)
 library(geospaar)
@@ -138,7 +138,7 @@ Information source: https://www.droughtmanagement.info/noaa-drought-index-ndi/
 
 result_list <- list()
 
-noaa_stack <- noaa_drought(weekly_prec, result_list) %>% stack()
+noaa_stack <- SouthAfricaDrought::noaa_drought(weekly_prec, result_list) %>% stack()
 
 noaa_class_stack <- SouthAfricaDrought::noaa_class(noaa_stack)
 
@@ -156,10 +156,7 @@ names(noaa_class_stack) <- c('Week 9',
                              'Week 20',
                              'Week 21',
                              'Week 22')
-                             #'week23_2019-02-21_2019-02-27'
-                             
-noaa_class_stack
-
+                             #'week 23')
 
 ```
 
@@ -167,8 +164,6 @@ noaa_class_stack
 
 ```{r, echo = FALSE, message=FALSE}
 #Display final maps of drought -- times series of drought areas?
-
-shiny_data <- noaa_class_stack
 
 shinyApp(ui <- fluidPage(
   
@@ -201,7 +196,7 @@ server <- function(input, output, session) {
   })
   
   df_filtered <- reactive({
-        shiny_data[[input$slider]]
+        noaa_class_stack[[input$slider]]
         })
   
   observe({

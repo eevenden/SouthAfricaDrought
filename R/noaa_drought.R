@@ -9,7 +9,7 @@
 #'
 noaa_drought <- function(weekly_prec, list){
   
-  while (x < nlayers(weekly_prec + 1)) {
+  while (x < (nlayers(weekly_prec)+1)) {
     
     eightweek <- weekly_prec[[ i:(i + 8) ]]
     
