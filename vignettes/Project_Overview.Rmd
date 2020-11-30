@@ -101,7 +101,7 @@ week_names <- c('week1_2019-10-27_2019-11-02',
                         'week23_2019-02-21_2019-02-27')
 
 names(weekly_prec) <- week_names
-
+weekly_prec
 ```
 
 ## Methods
