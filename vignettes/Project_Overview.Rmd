@@ -106,6 +106,7 @@ weekly_prec
 
 ## Methods
 
+
 # 1. Deciles Index
 
 The Deciles index compares precipitation from a specific time interval with precipitation from a historic time interval (usually 30 years or more). This index only uses precipitation data. The decile method divides each month of historic precipitation data  into ten equal parts. These categories can then be used to assess the new time interval. The decile ranges can be categorized as such:
@@ -127,6 +128,8 @@ q1
 
 #NOAA Drough Index
 ```
+
+
 
 # 2. NOAA Drought Index
 
@@ -155,10 +158,11 @@ names(noaa_class_stack) <- c('Week 9',
                              'Week 19',
                              'Week 20',
                              'Week 21',
-                             'Week 22')
-                             #'week 23')
-
+                             'Week 22',
+                             'week 23')
 ```
+
+
 
 # Data Visualization
 
@@ -196,19 +200,13 @@ server <- function(input, output, session) {
   })
   
   df_filtered <- reactive({
-        noaa_class_stack[[input$slider]]
-        })
+    
+    noaa_class_stack[[input$slider]]
+    
+    })
   
   observe({
-
-        leafletProxy(mapId = "Raster") %>% clearImages() %>% addRasterImage(df_filtered())
-  })
-  
-  autoInvalidate <- reactiveTimer(10000)
-  
-  observe({
-    autoInvalidate()
-    cat(".")
+    leafletProxy(mapId = "Raster") %>% clearImages() %>% addRasterImage(df_filtered())
   })
   
   options = list(height = 800)
