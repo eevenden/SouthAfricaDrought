@@ -160,7 +160,7 @@ names(noaa_class_stack) <- c('Week 9',
                              'Week 21',
                              'Week 22',
                              'week 23')
-plot(noaa_class_stack)
+
 ```
 
 
@@ -168,12 +168,10 @@ plot(noaa_class_stack)
 # Data Visualization
 
 ```{r, echo = FALSE, message=FALSE}
-#Display final maps of drought -- times series of drought areas?
-pal <- colorFactor(c("red" ), c(1), na.color = "transparent")
 
 shinyApp(ui <- fluidPage(
   
-  titlePanel("Weekly Raster"),
+  titlePanel("Weekly NOAA Index"),
 
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
@@ -205,7 +203,7 @@ server <- function(input, output, session) {
       
       addRasterImage(df_filtered(), color = pal) %>% 
       
-      addLegend("bottomright", pal = pal, values = c(0, 1), labels = c("", "Area of Water Stress"), opacity = 1)
+      addLegend("bottomleft", labels=c("Vegetative Stress"), colors = c("red"), opacity = .60)
 
   })
   
@@ -219,7 +217,7 @@ server <- function(input, output, session) {
     leafletProxy(mapId = "Raster") %>% clearImages() %>% addRasterImage(df_filtered(), color = pal, opacity = 0.6)
   })
   
-  options = list(height = 800)
+  options = list(height = 1000)
 
 })
 
