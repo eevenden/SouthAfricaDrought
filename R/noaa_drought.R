@@ -11,23 +11,23 @@ noaa_drought <- function(weekly_prec, list){
   
   x = 0
   
-  i= 0
+  i= 1
   
-  while (x < nlayers(weekly_prec)) {
+  while (x < (nlayers(weekly_prec) - 8)) {
     
-    eightweek <- weekly_prec[[ i:(i + 8) ]]
+    eightweek <- weekly_prec[[ i:(i + 7) ]]
     
-    present <- weekly_prec[[(i + 9)]]
+    present <- weekly_prec[[(i + 8)]]
     
     mean_eightweek <- calc(eightweek, fun = mean)
     
     noaa <- (present / mean_eightweek)
     
-    list[[i]] <- noaa
+    result_list[[i]] <- noaa
     
     i = i + 1
     x = x + 1
   }
+  
   return(list)
-
 }
