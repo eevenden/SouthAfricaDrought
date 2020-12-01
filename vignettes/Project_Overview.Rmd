@@ -13,21 +13,32 @@ knitr::opts_chunk$set(
 
 
 # Project Overview
+
 ## Authors: Emily Evenden and Maseeng Masitha
-## Date: November 23rd, 2020
+
+## Date: December 4th, 2020
+
 
 ## Summary
 
 We aim to identify bouts of drought in South Africa over the summer season of November, 2019, to March, 2020. Drought will be determined by persisting stretches of no rainfall. We will use two drought indices which rely solely on rainfall data: the Deciles Index and the NOAA Drought Index to identify areas of South Africa expericning drought. Through this project, we hope to program easy drought metrics for South Africa which could be used to determine early warnings of low crop yields.
 
+
 # Primary Objectives
 
 - Make long-term and short-term rainfall data available to the user in both monthly and weekly time intervals
+
 - Program two drought indices
+
 - Identify areas in South Africa that experienced drought last summer (2019-2020).
 
+
+
 # Approach and Method
+
+
 ## Data
+
 
 This data contains five datasets:
 
@@ -39,12 +50,16 @@ This data contains five datasets:
   
   5. SA_Chirps_10yr_Monthly_Mean_Precip - this datasets is also dervied from the Chirps daily precipitation dataset. Each raster layer in this dataset shows the ten year average of rainfall for that month. The data range for this data is April 1, 1987 to March 31, 2018. 
 
+
+
 We obtained datasets for temperature and precipitation from Google Earth Engine (GEE) database. Specifically, we utilized the "Chirps Daily: Climate Hazards Group Infrared Precipitation" dataset (available here: https://developers.google.com/earth-engine/datasets/catalog/UCSB-CHG_CHIRPS_DAILY) and the "Terra Land Surface Temperature and Emissivity Daily Global 1km" dataset (available here: https://developers.google.com/earth-engine/datasets/catalog/MODIS_006_MOD11A1). These datasets were filtered by data and location and reduced using the mean function via the Javascript Code Editor available online through GEE. Once selected, the data was exported to Google Drive.  
+
 
 Finally data preprocessing was conducted using R. Following this, the datasets were clipped in R to the extent of the study area, South Africa. A function for calculating mean monthly amounts for the variables was applied on temperature and precipitation datasets and units converted where appropriate: Kelvin to degree Celsius. The next geoprocessing of the datasets was done in raster layers, and included calculating the mean of pixels throughout the months to produce a new output file.
 
-```{r setup, error=TRUE, echo = FALSE, message = FALSE}
 
+```{r setup, error=TRUE, echo = FALSE, include = FALSE}
+#load necessary libraries
 library(SouthAfricaDrought)
 library(geospaar)
 library(sf)
@@ -54,56 +69,82 @@ library(shiny)
 library(shinydashboard)
 library(leaflet)
 library(ggplot2)
+library(rasterVis)
+library(lattice)
+library(latticeExtra)
 
+#set custom equal area projection for South Africa
 afalb <- paste0("+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 ", "+y_0=0 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs")
 
-#Load South Africa boundary and reprojects to Hartebeesthoek94
-boundary <- system.file("extdata/SouthAfrica_Boundary.shp", package = "SouthAfricaDrought") %>% st_read() %>% st_transform(x = ., crs = afalb)
+#Load South Africa boundary and reproject to custom projection
+boundary <- system.file("extdata/SouthAfrica_Boundary.shp", package = "SouthAfricaDrought") %>% 
+  st_read() %>% 
+  st_transform(x = ., crs = afalb)
 
-#Load long-term monthly data and reprojects custom projection for SA
-lt_monthly_prec <- system.file("extdata/SA_30yr_LT_Mean_Precip.tif", package = "SouthAfricaDrought") %>% stack() %>% projectRaster(., crs = afalb)
+#Load long-term 30-yr monthly data and reproject to custom projection
+lt_monthly_prec <- system.file("extdata/SA_30yr_LT_Mean_Precip.tif", package = "SouthAfricaDrought") %>% 
+  stack() %>% 
+  projectRaster(., crs = afalb)
 
 #Rename according to month
 names(lt_monthly_prec) <- c('Nov_87_17', 'Dec_87_17', 'Jan_88_18', 'Feb_88_18', 'March_88_18')
                               
-#Load summer monthly data and reprojects custom projection for SA
-monthly_prec <- system.file("extdata/SA_Chirps_Monthly_Mean_Precip.tif", package = "SouthAfricaDrought") %>% stack() %>% projectRaster(., crs = afalb)
+#Load summer 2019-2020 monthly data and reproject custom projection
+monthly_prec <- system.file("extdata/SA_Chirps_Monthly_Mean_Precip.tif", package = "SouthAfricaDrought") %>% 
+  stack() %>% 
+  projectRaster(., crs = afalb)
 
-#Rename layers accoridng to their month
-                                                                                                                          names(monthly_prec) <- c('Nov_2019', 'Dec_2019', 'Jan_2020', 'Feb_2020', 'March_2020')
-plot(monthly_prec)                                                                                                                              
-#Load summer weekly precipitation values (mm) and reprojects custom projection for SA
-weekly_prec <- system.file("extdata/SA_Chirps_Weekly_Mean_Precip.tif", package = "SouthAfricaDrought") %>% stack() %>% projectRaster(., crs = afalb)
+#Rename layers according to their month
+names(monthly_prec) <- c('Nov_2019', 'Dec_2019', 'Jan_2020', 'Feb_2020', 'March_2020')
+                                                                                                                          
+#Load summer weekly precipitation values and reproject custom projection
+weekly_prec <- system.file("extdata/SA_Chirps_Weekly_Mean_Precip.tif", package = "SouthAfricaDrought") %>% 
+  stack() %>% 
+  projectRaster(., crs = afalb)
 
 #Rename precipitation layers according to the data range of each image
 week_names <- c('week1_2019-10-27_2019-11-02',
-                        'week2_2019-11-17_2019-11-23',
-                        'week3_2019-11-24_2019-11-30',
-                        'week4_2019-12-01_2019-12-07',
-                        'week5_2019-12-08_2019-12-14',
-                        'week6_2019-12-15_2019-12-21',
-                        'week7_2019-12-22_2019-12-28',
-                        'week8_2019-12-29_2019-01-05',
-                        'week9_2019-01-06_2019-01-12',
-                        'week10_2019-01-13_2019-01-19',
-                        'week11_2019-01-20_2019-01-26',
-                        'week12_2019-01-27_2019-02-02',
-                        'week13_2019-02-03_2019-02-09',
-                        'week14_2019-02-10_2019-02-16',
-                        'week15_2019-02-17_2019-02-23',
-                        'week16_2019-02-24_2019-03-02',
-                        'week17_2019-03-10_2019-03-16',
-                        'week18_2019-03-17_2019-02-23',
-                        'week19_2019-03-24_2019-03-30',
-                        'week20_2019-03-31_2019-04-06',
-                        'week21_2019-04-07_2019-04-13',
-                        'week22_2019-04-14_2019-04-20',
-                        'week23_2019-02-21_2019-02-27')
+                'week2_2019-11-17_2019-11-23',
+                'week3_2019-11-24_2019-11-30',
+                'week4_2019-12-01_2019-12-07',
+                'week5_2019-12-08_2019-12-14',
+                'week6_2019-12-15_2019-12-21',
+                'week7_2019-12-22_2019-12-28',
+                'week8_2019-12-29_2019-01-05',
+                'week9_2019-01-06_2019-01-12',
+                'week10_2019-01-13_2019-01-19',
+                'week11_2019-01-20_2019-01-26',
+                'week12_2019-01-27_2019-02-02',
+                'week13_2019-02-03_2019-02-09',
+                'week14_2019-02-10_2019-02-16',
+                'week15_2019-02-17_2019-02-23',
+                'week16_2019-02-24_2019-03-02',
+                'week17_2019-03-10_2019-03-16',
+                'week18_2019-03-17_2019-02-23',
+                'week19_2019-03-24_2019-03-30',
+                'week20_2019-03-31_2019-04-06',
+                'week21_2019-04-07_2019-04-13',
+                'week22_2019-04-14_2019-04-20',
+                'week23_2019-02-21_2019-02-27')
 
 names(weekly_prec) <- week_names
-weekly_prec
+
 ```
 
+Here is an example of our raw data. The plots below show monthly rainfall data for the months of November, 2019, to March, 2020.
+
+```{r, error = TRUE,  message = FALSE, warning = FALSE, fig.width = 7, fig.height = 2.5}
+
+#Display monthly dataset using rasterVis levelplot
+
+levelplot(monthly_prec, 
+          scales=list(draw=FALSE), #get rid of axes
+          par.settings = viridisTheme(axis.line = list(col = "transparent")), #get rid of boundary
+          main = "Monthly Mean Percipitation", #set title
+          names.attr=c("Nov 2019", "Dec 2019", "Jan 2020", "Feb 2020", "Mar 2020"), #set subplot titles
+          colorkey=list(labels=list(cex=1, font=1), title = "mm/Day")) #alter legend labels and title
+
+```
 ## Methods
 
 
@@ -112,21 +153,24 @@ weekly_prec
 The Deciles index compares precipitation from a specific time interval with precipitation from a historic time interval (usually 30 years or more). This index only uses precipitation data. The decile method divides each month of historic precipitation data  into ten equal parts. These categories can then be used to assess the new time interval. The decile ranges can be categorized as such:
 
   Deciles 1-2: Much below Normal
+  
   Deciles 3-4: Below Normal
+  
   Deciles 5-6: Near Normal
+  
   Deciles 7-8: Above Normal
+  
   Deciles 8-9: Much above Normal
 
 Information source: https://agrimetsoft.com/faq/What%20is%20DI(Deciles%20Index)
 
-```{r, error= TRUE, echo = FALSE, message=FALSE}
+```{r, error= TRUE, echo = FALSE, message = FALSE, warning = FALSE}
 #write out code here and explain
 #Deciles
 q1 <- quantile(monthly_prec, c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1), na.rm=TRUE)
 
 q1
 
-#NOAA Drough Index
 ```
 
 
@@ -137,15 +181,15 @@ The NOAA Drought Index is also a precipitation based index. This index utilized 
 
 Information source: https://www.droughtmanagement.info/noaa-drought-index-ndi/
 
-```{r, error= TRUE, echo = FALSE, message=FALSE}
+```{r, error= TRUE, echo = FALSE, include = FALSE}
 
-result_list <- list()
+result_list <- list() #create a list to store outputs
 
-noaa_stack <- SouthAfricaDrought::noaa_drought(weekly_prec, result_list) %>% stack()
+noaa_stack <- SouthAfricaDrought::noaa_drought(weekly_prec, result_list) %>% stack() #calculate the NOAA drought index
 
-noaa_class_stack <- SouthAfricaDrought::noaa_class(noaa_stack)
+noaa_class_stack <- SouthAfricaDrought::noaa_class(noaa_stack) #reclassify the noaa_drought output to show areas of water stress
 
-names(noaa_class_stack) <- c('Week 9',
+names(noaa_class_stack) <- c('Week 9', #rename layers
                              'Week 10',
                              'Week 11',
                              'Week 12',
@@ -167,11 +211,15 @@ names(noaa_class_stack) <- c('Week 9',
 
 # Data Visualization
 
-```{r, echo = FALSE, message=FALSE}
 
-shinyApp(ui <- fluidPage(
+```{r, echo = FALSE, include = FALSE}
+#Display NOAA Drought results in an interactive ShinyApp
+
+pal <- colorFactor("red", 1, na.color ="transparent") #create palette 
+
+shinyApp(ui <- fluidPage( #create embedded ShinyApp
   
-  titlePanel("Weekly NOAA Index"),
+  titlePanel("Weekly NOAA Index (01/06/2020 - 03/31/2020)"), #set page title
 
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
@@ -179,53 +227,68 @@ shinyApp(ui <- fluidPage(
     # Sidebar panel for inputs ----
     sidebarPanel(
 
-      sliderInput(inputId = "slider", label = "Week", min = 0, max = 14, value = 1)
+      sliderInput(inputId = "slider", label = "Week", min = 0, max = 14, value = 1) #set interactive slider options. 
     ),
 
     # Main panel for displaying outputs ----
     mainPanel(
 
       # Output:
-      leafletOutput("Raster", width = "100%")
+      leafletOutput("Raster", width = "100%") #make output a leaflet interactive map
     )
   )),
 
 
 server <- function(input, output, session) {
 
-  output$Raster <- renderLeaflet({
+  output$Raster <- renderLeaflet({ #create map
     
     leaflet() %>% 
       
-      addTiles() %>% 
+      addTiles() %>% #add OSM tiles as basemap
       
-      setView(lat= -29, lng=24, zoom = 5) %>% 
+      setView(lat= -29, lng=24, zoom = 5) %>% #set the map center
       
-      addRasterImage(df_filtered(), color = pal) %>% 
+      addRasterImage(df_filtered(), color = pal) %>% #add raster data which will change based on slider input
       
-      addLegend("bottomleft", labels=c("Vegetative Stress"), colors = c("red"), opacity = .60)
+      addLegend("bottomleft", labels=c("Vegetative Stress"), colors = c("red"), opacity = .60) #add legend
 
   })
   
-  df_filtered <- reactive({
+  df_filtered <- reactive({ #object for updating data display
     
-    !is.na(noaa_class_stack[[input$slider]])
+    !is.na(noaa_class_stack[[input$slider]]) #filter data based on slider input and only keep non-NA pixels
     
     })
   
   observe({
-    leafletProxy(mapId = "Raster") %>% clearImages() %>% addRasterImage(df_filtered(), color = pal, opacity = 0.6)
+    leafletProxy(mapId = "Raster") %>% clearImages() %>% addRasterImage(df_filtered(), color = pal, opacity = 0.6) #object which clears old data and loads updated data
   })
   
-  options = list(height = 1000)
+  options = list(height = 1500) #set height of map
 
 })
 
 ```
 
-# Results
+# Results & Potential Improvements
+
+
+
+
 
 # Contribution
-## Maseeng
+### Maseeng
 
-## Emily
+1. Rainfall data download from GEE
+2. Deciles function and visualization
+3. Writing up Project Overview
+
+### Emily
+
+1. South Africa Boundary, Temperature, and Rainfall data download from GEE
+2. Preprocessing raster data and adding it to R package
+3. Avg_Stack, Crop_Stack, NOAA_Drought, and NOAA_class functions
+4. ShinyApp development
+5. Writing up Project Overview
+
