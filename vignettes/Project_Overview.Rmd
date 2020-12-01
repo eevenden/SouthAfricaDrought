@@ -160,6 +160,7 @@ names(noaa_class_stack) <- c('Week 9',
                              'Week 21',
                              'Week 22',
                              'week 23')
+plot(noaa_class_stack)
 ```
 
 
@@ -168,6 +169,7 @@ names(noaa_class_stack) <- c('Week 9',
 
 ```{r, echo = FALSE, message=FALSE}
 #Display final maps of drought -- times series of drought areas?
+pal <- colorFactor(c("red" ), c(1), na.color = "transparent")
 
 shinyApp(ui <- fluidPage(
   
@@ -195,18 +197,26 @@ server <- function(input, output, session) {
 
   output$Raster <- renderLeaflet({
     
-    leaflet() %>% addTiles() %>% setView(lat= -29, lng=24, zoom = 5) %>% addRasterImage(df_filtered())
+    leaflet() %>% 
+      
+      addTiles() %>% 
+      
+      setView(lat= -29, lng=24, zoom = 5) %>% 
+      
+      addRasterImage(df_filtered(), color = pal) %>% 
+      
+      addLegend("bottomright", pal = pal, values = c(0, 1), labels = c("", "Area of Water Stress"), opacity = 1)
 
   })
   
   df_filtered <- reactive({
     
-    noaa_class_stack[[input$slider]]
+    !is.na(noaa_class_stack[[input$slider]])
     
     })
   
   observe({
-    leafletProxy(mapId = "Raster") %>% clearImages() %>% addRasterImage(df_filtered())
+    leafletProxy(mapId = "Raster") %>% clearImages() %>% addRasterImage(df_filtered(), color = pal, opacity = 0.6)
   })
   
   options = list(height = 800)
@@ -215,10 +225,9 @@ server <- function(input, output, session) {
 
 ```
 
-
 # Results
-```{r, error=TRUE}
-#Calculate area of drought?
 
-```
+# Contribution
+## Maseeng
 
+## Emily
