@@ -1,10 +1,7 @@
 ---
-title: "Project_Overview"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Project_Overview}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+title: "Project Overview"
+output: html_document
+runtime: shiny
 ---
 
 ```{r, include = FALSE}
@@ -14,34 +11,96 @@ knitr::opts_chunk$set(
 )
 ```
 
-Project Prompt
 
-Use the SMS survey and co-located sensor rainfall data to identify mid-season dry-spells of potential agricultural significance. For example, two or more consecutive rainless weeks close to maize flowering or grain-filling times. Can you detect a signficant drop in farmers’ anticipated harvest amounts around such events (we might expect a sudden drop in expected harvest amounts)? How about a significant change in the rate of reduction in farmers’ reported maize storage levels fall (if farmers are concerned about crop loss, they might slow their rate of consumption of stored food)?
+## Authors: Emily Evenden and Maseeng Masitha
 
 
-# Description
+## Date: December 4th, 2020
 
-#Summary
 
-#In this project we aim to identify bouts of drought in South Africa over the period of 2008 and 2011. Drought will be determined by persisting stretches of no rainfall within a predetermined season. Our threshold for drought will be based on the Palmer Drought Severity Index (PDSI) with key components: temperature and precipitation. The PDSI indicates drought as a range -10 (dry) to 10 (wet) atmosphere, thus we are able to grade drought conditions to more desirable moist conditions. In this project, we aim to design a metric for determining drought spans in South African farms. The importance of this project is aligned to food security goals as planning for adverse or dry spells can be achieved with the information provided by our metric system. Timing of farming activities will also be optimised to produce the optimum yield per area utilised. 
 
-#Primary Objectives:
-#Develop metric system for determining area-specific drought
+# Summary
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+We aim to identify bouts of drought in South Africa over the summer season of November, 2019, to March, 2020. Drought will be determined by persisting stretches of no rainfall. We will use two drought indices which rely solely on rainfall data: the Deciles Index and the NOAA Drought Index to identify areas of South Africa expericning drought. Through this project, we hope to program easy drought metrics for South Africa which could be used to determine early warnings of low crop yields.
+>>>>>>> de78cf0d35406d17a84f2d5a1d80758c75b24e54
 
-#Approach and Method:
 
+<<<<<<< HEAD
 #For the task of demonstrating the utility of a metric system for identifying periods of drought we obtained datasets for temperature and precipitation from Google Earth Engine (GEE) geodatabase. Following this, the datasets were clipped in R to the extent of the study area, South Africa. A function for calculating mean monthly amounts for the variables was applied on temperature and precipitation datasets and units converted where appropriate: Kelvin to degree Celsius. The next geoprocessing of the datasets was done in raster layers, and included calculating the mean of pixels throughout the months to produce a new output file.
 =======
 >>>>>>> 95f6505c6cb9ce197a26afd1157a1519fd6091bc
 ```{r setup}
+=======
+
+# Primary Objectives
+
+
+
+- Make long-term and short-term rainfall data available to the user in both monthly and weekly time intervals
+
+- Program two drought indices
+
+- Identify areas in South Africa that experienced drought last summer (2019-2020).
+
+
+
+# Approach and Method
+
+
+## Data
+
+
+This data contains five datasets:
+
+  1. SouthAfrica_Boundary - a vector file containing the boundary of South Africa provided by the Humanitarian Data Exchange (available here: https://data.humdata.org/dataset/south-africa-admin-level-1-boundaries)
+  
+  2. SA_MODIS_Monthly_Mean_Temperature - a raster stack of the average monthly temperature (in Celsius) for South Africa. This dataset is not currently used in any of the indices we created, but is available for future use if more indicies are added.
+  
+  3. & 4. SA_Chirps_Weekly_Mean_Precip & SA_Chirps_Monthly_Mean_Precip - these datasets are two different aggregations of the daily Chirps precipitation data. Obviously, the weekly data is aggregated by week while the monthly data is aggregated by month. The unit of this dataset is mm of rainfall per day.
+  
+  5. SA_Chirps_10yr_Monthly_Mean_Precip - this datasets is also dervied from the Chirps daily precipitation dataset. Each raster layer in this dataset shows the ten year average of rainfall for that month. The data range for this data is April 1, 1987 to March 31, 2018. 
+
+
+
+We obtained datasets for temperature and precipitation from Google Earth Engine (GEE) database. Specifically, we utilized the "Chirps Daily: Climate Hazards Group Infrared Precipitation" dataset (available here: https://developers.google.com/earth-engine/datasets/catalog/UCSB-CHG_CHIRPS_DAILY) and the "Terra Land Surface Temperature and Emissivity Daily Global 1km" dataset (available here: https://developers.google.com/earth-engine/datasets/catalog/MODIS_006_MOD11A1). These datasets were filtered by data and location and reduced using the mean function via the Javascript Code Editor available online through GEE. Once selected, the data was exported to Google Drive.  
+
+
+Finally data preprocessing was conducted using R. Following this, the datasets were clipped in R to the extent of the study area, South Africa. A function for calculating mean monthly amounts for the variables was applied on temperature and precipitation datasets and units converted where appropriate: Kelvin to degree Celsius. The next geoprocessing of the datasets was done in raster layers, and included calculating the mean of pixels throughout the months to produce a new output file.
+
+
+```{r setup, error=TRUE, echo = FALSE, include = FALSE}
+#load necessary libraries
+>>>>>>> de78cf0d35406d17a84f2d5a1d80758c75b24e54
 library(SouthAfricaDrought)
 library(geospaar)
 library(sf)
 library(rgdal)
 library(raster)
+library(shiny)
+library(shinydashboard)
+library(leaflet)
+library(ggplot2)
+library(rasterVis)
+library(lattice)
+library(latticeExtra)
 
+#set custom equal area projection for South Africa
+afalb <- paste0("+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 ", "+y_0=0 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs")
+
+#Load South Africa boundary and reproject to custom projection
+boundary <- system.file("extdata/SouthAfrica_Boundary.shp", package = "SouthAfricaDrought") %>% 
+  st_read() %>% 
+  st_transform(x = ., crs = afalb)
+
+#Load long-term 30-yr monthly data and reproject to custom projection
+lt_monthly_prec <- system.file("extdata/SA_30yr_LT_Mean_Precip.tif", package = "SouthAfricaDrought") %>% 
+  stack() %>% 
+  projectRaster(., crs = afalb)
+
+<<<<<<< HEAD
 boundary <- system.file("data/SouthAfrica_Boundary.shp", package = "SouthAfricaDrought") %>% st_read()
 
 temperature <- system.file("data/SA_MODIS_Monthly_Mean_Temp.tif", package = "SouthAfricaDrought") %>% stack()
@@ -50,18 +109,256 @@ names(temperature) <- c("Nov_2019", "Dec_2019", "Jan_2020", "Feb_2020", "March_2
 #precip
 
 #reproject data 
+=======
+#Rename according to month
+names(lt_monthly_prec) <- c('Nov_87_17', 'Dec_87_17', 'Jan_88_18', 'Feb_88_18', 'March_88_18')
+                              
+#Load summer 2019-2020 monthly data and reproject custom projection
+monthly_prec <- system.file("extdata/SA_Chirps_Monthly_Mean_Precip.tif", package = "SouthAfricaDrought") %>% 
+  stack() %>% 
+  projectRaster(., crs = afalb)
+
+#Rename layers according to their month
+names(monthly_prec) <- c('Nov_2019', 'Dec_2019', 'Jan_2020', 'Feb_2020', 'March_2020')
+                                                                                                                          
+#Load summer weekly precipitation values and reproject custom projection
+weekly_prec <- system.file("extdata/SA_Chirps_Weekly_Mean_Precip.tif", package = "SouthAfricaDrought") %>% 
+  stack() %>% 
+  projectRaster(., crs = afalb)
+
+#Rename precipitation layers according to the data range of each image
+week_names <- c('week1_2019-10-27_2019-11-02',
+                'week1_2019-11-03_2019-11-09',
+                'week3_2019-11-10_2019-11-16',
+                'week2_2019-11-17_2019-11-23',
+                'week3_2019-11-24_2019-11-30',
+                'week4_2019-12-01_2019-12-07',
+                'week5_2019-12-08_2019-12-14',
+                'week6_2019-12-15_2019-12-21',
+                'week7_2019-12-22_2019-12-28',
+                'week8_2019-12-29_2020-01-05',
+                'week9_2020-01-06_2020-01-12',
+                'week10_2020-01-13_2020-01-19',
+                'week11_2020-01-20_2020-01-26',
+                'week12_2020-01-27_2020-02-02',
+                'week13_2020-02-03_2020-02-09',
+                'week14_2020-02-10_2020-02-16',
+                'week15_2020-02-17_2020-02-23',
+                'week16_2020-02-24_2020-03-02',
+                'week17_2020-03-10_2020-03-16',
+                'week18_2020-03-17_2020-02-23',
+                'week19_2020-03-24_2020-03-30',
+                'week20_2020-03-31_2020-04-06',
+                'week21_2020-04-07_2020-04-13')
+
+names(weekly_prec) <- week_names
 
 ```
 
-# Methods
+Here is an example of our raw data. The plot below shows monthly rainfall data for the months of November, 2019, to March, 2020.
 
+```{r, error = TRUE,  message = FALSE, warning = FALSE, fig.width = 7, fig.height = 2.5, fig.align = "center"}
+
+levelplot(monthly_prec, 
+          scales=list(draw=FALSE), #get rid of axes
+          par.settings = viridisTheme(axis.line = list(col = "transparent")), #get rid of boundary
+          main = "Monthly Mean Percipitation (Nov 2019 - March 2020)", #set title
+          names.attr=c("Nov 2019", "Dec 2019", "Jan 2020", "Feb 2020", "Mar 2020"), #set subplot titles
+          colorkey=list(labels=list(cex=1, font=1), title = "mm/Day")) #alter legend labels and title
+
+```
+
+
+
+Here is another example of our raw data. This plot shows the weekly rainfall data. 
+
+```{r, error = TRUE,  message = FALSE, warning = FALSE, fig.width = 7, fig.height = 6, fig.align = "center"}
+
+levelplot(weekly_prec, 
+          scales=list(draw=FALSE), #get rid of axes
+          par.settings = viridisTheme(axis.line = list(col = "transparent")), #get rid of boundary
+          main = "Weekly Mean Percipitation (10/27/2019 - 04/13/20)", 
+          names.attr=c("10/27- 11/2", "11/3-11/10", "11/11-11/16", "11/17-11/23", "11/24-11/30", "12/1-12/7", 
+                       "12/8-12/14", "12/15-12/21", "12/22-12/28", "12/29-1/5",
+                       "1/6-1/12", "1/13-1/19", "1/20-1/26", "1/27-2/2", "2/3-2/9", "2/10-2/16", "2/17-2/23",
+                       "2/24-3/2", "3/3-3/9", "3/10-3/16", "3/24-3/30", "3/31-4/6", "4/7-4/13"),#set title
+          colorkey=list(labels=list(cex=1, font=1), title = "mm/Day")) #alter legend labels and title
+>>>>>>> de78cf0d35406d17a84f2d5a1d80758c75b24e54
+
+```
+
+
+<<<<<<< HEAD
 - Deciles - recommended by drought.gov, cut the pixels into cateogries of rainfall - deciles 
 
 - Temperature above climatic monthly average?
+=======
 
-- EVI - Remote Sensing indicator for vegetation health
+## Methods
+
+
+### 1. Deciles Index
+
+The Deciles index compares precipitation from a specific time interval with precipitation from a historic time interval (usually 30 years or more). This index only uses precipitation data. The decile method divides each month of historic precipitation data  into ten equal parts. These categories can then be used to assess the new time interval. The decile ranges can be categorized as such:
+
+  Deciles 1-2: Much below Normal
+  
+  Deciles 3-4: Below Normal
+  
+  Deciles 5-6: Near Normal
+  
+  Deciles 7-8: Above Normal
+  
+  Deciles 8-9: Much above Normal
+
+Information source: https://agrimetsoft.com/faq/What%20is%20DI(Deciles%20Index)
+
+```{r, error= TRUE, echo = FALSE, warning = FALSE}
+#write out code here and explain
+#Deciles
+q1 <- quantile(monthly_prec, c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1), na.rm=TRUE)
+
+q1
+
+```
+
+>>>>>>> de78cf0d35406d17a84f2d5a1d80758c75b24e54
+
+
+### 2. NOAA Drought Index
+
+The NOAA Drought Index is also a precipitation based index. This index utilized weekly precipitation data for the time interval of interest. In this case, the mean precipitation for an eight-week interval is calculated and then compared with the subsequent ninth week. If the ninth week is greater than 60% of the precipitation, it's classified as having little to no water stress. An area is considered no longer stressed once the rainfall returns to 60% or more. 
+
+Information source: https://www.droughtmanagement.info/noaa-drought-index-ndi/
+
+```{r, error= TRUE, echo = FALSE, warning = FALSE}
+
+result_list <- list() #create a list to store outputs
+
+noaa_stack <- SouthAfricaDrought::noaa_drought(weekly_prec, result_list) %>% stack() #calculate the NOAA drought index
+
+noaa_class_stack <- SouthAfricaDrought::noaa_class(noaa_stack) #reclassify the noaa_drought output to show areas of water stress
+
+names(noaa_class_stack) <- c('Week 9', #rename layers
+                             'Week 10',
+                             'Week 11',
+                             'Week 12',
+                             'Week 13',
+                             'Week 14',
+                             'Week 15',
+                             'Week 16',
+                             'Week 17',
+                             'Week 18',
+                             'Week 19',
+                             'Week 20',
+                             'Week 21',
+                             'Week 22',
+                             'week 23')
+
+```
+
 
 
 # Data Visualization
 
-# Results
+The two ShinyApps below show the results for the drought indices. By sliding the time-scale, you can switch between raster layers. It is very slow, so be patient. 
+
+```{r, error = FALSE, warning = FALSE}
+
+# Display Decile Drought results in an interactive ShinyApp
+
+```
+
+```{r, echo = FALSE, warning = FALSE}
+
+# Display NOAA Drought results in an interactive ShinyApp
+
+pal <- colorFactor("red", 1, na.color ="transparent") #create palette 
+
+shinyApp(ui <- fluidPage( #create embedded ShinyApp
+  
+  titlePanel("Weekly NOAA Index (01/06/2020 - 04/48/2020)"), #set page title
+
+  # Sidebar layout with input and output definitions ----
+  sidebarLayout(
+
+    # Sidebar panel for inputs ----
+    sidebarPanel(
+
+      sliderInput(inputId = "slider", label = "Week", min = 0, max = 14, value = 1) #set interactive slider options. 
+    ),
+
+    # Main panel for displaying outputs ----
+    mainPanel(
+
+      # Output:
+      leafletOutput("Raster", width = "100%") #make output a leaflet interactive map
+    )
+  )),
+
+
+server <- function(input, output, session) {
+
+  output$Raster <- renderLeaflet({ #create map
+    
+    leaflet() %>% 
+      
+      addTiles() %>% #add OSM tiles as basemap
+      
+      setView(lat= -29, lng=24, zoom = 5) %>% #set the map center
+      
+      addRasterImage(df_filtered(), color = pal) %>% #add raster data which will change based on slider input
+      
+      addLegend("bottomleft", labels=c("Vegetative Stress"), colors = c("red"), opacity = .60) #add legend
+
+  })
+  
+  df_filtered <- reactive({ #object for updating data display
+    
+    !is.na(noaa_class_stack[[input$slider]]) #filter data based on slider input and only keep non-NA pixels
+    
+    })
+  
+  observe({
+    leafletProxy(mapId = "Raster") %>% clearImages() %>% addRasterImage(df_filtered(), color = pal, opacity = 0.6) #object which clears old data and loads updated data
+  })
+  
+  options = list(height = 1500) #set height of map
+
+})
+
+```
+
+
+
+# Results & Potential Improvements
+
+## Compare outputs
+
+Deciles: 
+
+NOAA Drought: 
+
+## Potential Improvements
+
+This initial package produces drought indices which only utilize rainfall data. On one hand, having one dataset makes it much easier to calculate indices. However, these are not necessarily the best indices for measuring vegetative stress because they exclude important variables such as soil moisture and evapotranspirition. For future development, we would suggest developing and incorporating more sophisticated metrics. 
+
+Additionally, though this package successfully produces an interactive ShinyApp. It would be better to host the app externally. This would hopefully improve the speed of the data reactivation as the user moves the slider thereby improving the entire user experience. 
+
+
+
+# Contribution
+### Maseeng
+
+1. Rainfall data download from GEE
+2. Deciles function
+3. Writing up Project Overview
+
+### Emily
+
+1. South Africa Boundary, Temperature, and Rainfall data download from GEE
+2. Preprocessing raster data and adding it to R package
+3. Avg_Stack, Crop_Stack, NOAA_Drought, and NOAA_class functions
+4. ShinyApp development
+5. Writing up Project Overview
+

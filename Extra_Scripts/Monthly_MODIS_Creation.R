@@ -4,15 +4,17 @@ library(sf)
 library(dplyr)
 
 
-SA <- read_sf(dsn = "C:/Users/Emily/Documents/Fall_2020/Geospatial_R/SouthAfricaDrought/data-raw", layer = "SouthAfrica_Boundary")
-crs(boundary)
+SA_new <- system.file("extdata/SouthAfrica_Boundary.shp", package = "SouthAfricaDrought") %>% st_read()
+SA_new
 
-fs <- dir("C:/Users/Emily/Documents/Fall_2020/Geospatial_R/MODIS_Temp", pattern = "*mean*", full.names = TRUE)
+fs <- dir("C:/Users/Emily/Documents/Fall_2020/Geospatial_R/Chirps/LT", pattern = "*LT.*\\.tif", full.names = TRUE)
+fs
 
 l <- lapply(fs, raster)
+plot(l[[1]])
 
-s <- stack(l)
+lt_stack <- stack(lapply(fs, function(x) crop(raster(x), SA_new)))
 
-names(s) <- c("2019_11_mean_celsius", "2019_12_mean_celsius", "2020_01_mean_celsius", "2020_02_mean_celsius", "2020_03_mean_celsius")
+names(s) <- c("Nov_LT", "Dec_LT", "Jan_LT", "Feb_LT", "March_LT")
 
-writeRaster(s, "SA_MODIS_Monthly_Mean_Temp", format = "GTiff")
+writeRaster(s, "SA_LT_Mean_Precip", format = "GTiff")

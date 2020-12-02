@@ -18,8 +18,8 @@ polygon <- ee$Geometry$Polygon(list(c(16.45189, -34.83417), c(32.94498, -34.8341
 fc <- ee$FeatureCollection(polygon)
 
 #Filter imagery
-collection <- ee$ImageCollection("UCSB-CHG/CHIRPS/DAILY")$
-  filterDate("2016-12-01", "2016-02-28")$
+collection <- ee$ImageCollection("MODIS/006/MOD11A1")$
+  filterDate("2019-11-01", "2020-03-31")$
   filterBounds(polygon)$
   select('precipitation')
   
