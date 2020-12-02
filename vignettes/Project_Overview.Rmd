@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 
 
-## Summary
+# Summary
 
 We aim to identify bouts of drought in South Africa over the summer season of November, 2019, to March, 2020. Drought will be determined by persisting stretches of no rainfall. We will use two drought indices which rely solely on rainfall data: the Deciles Index and the NOAA Drought Index to identify areas of South Africa expericning drought. Through this project, we hope to program easy drought metrics for South Africa which could be used to determine early warnings of low crop yields.
 
@@ -170,7 +170,7 @@ levelplot(weekly_prec,
 ## Methods
 
 
-# 1. Deciles Index
+### 1. Deciles Index
 
 The Deciles index compares precipitation from a specific time interval with precipitation from a historic time interval (usually 30 years or more). This index only uses precipitation data. The decile method divides each month of historic precipitation data  into ten equal parts. These categories can then be used to assess the new time interval. The decile ranges can be categorized as such:
 
@@ -197,7 +197,7 @@ q1
 
 
 
-# 2. NOAA Drought Index
+### 2. NOAA Drought Index
 
 The NOAA Drought Index is also a precipitation based index. This index utilized weekly precipitation data for the time interval of interest. In this case, the mean precipitation for an eight-week interval is calculated and then compared with the subsequent ninth week. If the ninth week is greater than 60% of the precipitation, it's classified as having little to no water stress. An area is considered no longer stressed once the rainfall returns to 60% or more. 
 
