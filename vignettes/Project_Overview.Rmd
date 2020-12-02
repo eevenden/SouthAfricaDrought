@@ -14,7 +14,9 @@ knitr::opts_chunk$set(
 
 ## Authors: Emily Evenden and Maseeng Masitha
 
+
 ## Date: December 4th, 2020
+
 
 
 ## Summary
@@ -22,7 +24,10 @@ knitr::opts_chunk$set(
 We aim to identify bouts of drought in South Africa over the summer season of November, 2019, to March, 2020. Drought will be determined by persisting stretches of no rainfall. We will use two drought indices which rely solely on rainfall data: the Deciles Index and the NOAA Drought Index to identify areas of South Africa expericning drought. Through this project, we hope to program easy drought metrics for South Africa which could be used to determine early warnings of low crop yields.
 
 
+
 # Primary Objectives
+
+
 
 - Make long-term and short-term rainfall data available to the user in both monthly and weekly time intervals
 
@@ -102,47 +107,64 @@ weekly_prec <- system.file("extdata/SA_Chirps_Weekly_Mean_Precip.tif", package =
 
 #Rename precipitation layers according to the data range of each image
 week_names <- c('week1_2019-10-27_2019-11-02',
+                'week1_2019-11-03_2019-11-09',
+                'week3_2019-11-10_2019-11-16',
                 'week2_2019-11-17_2019-11-23',
                 'week3_2019-11-24_2019-11-30',
                 'week4_2019-12-01_2019-12-07',
                 'week5_2019-12-08_2019-12-14',
                 'week6_2019-12-15_2019-12-21',
                 'week7_2019-12-22_2019-12-28',
-                'week8_2019-12-29_2019-01-05',
-                'week9_2019-01-06_2019-01-12',
-                'week10_2019-01-13_2019-01-19',
-                'week11_2019-01-20_2019-01-26',
-                'week12_2019-01-27_2019-02-02',
-                'week13_2019-02-03_2019-02-09',
-                'week14_2019-02-10_2019-02-16',
-                'week15_2019-02-17_2019-02-23',
-                'week16_2019-02-24_2019-03-02',
-                'week17_2019-03-10_2019-03-16',
-                'week18_2019-03-17_2019-02-23',
-                'week19_2019-03-24_2019-03-30',
-                'week20_2019-03-31_2019-04-06',
-                'week21_2019-04-07_2019-04-13',
-                'week22_2019-04-14_2019-04-20',
-                'week23_2019-02-21_2019-02-27')
+                'week8_2019-12-29_2020-01-05',
+                'week9_2020-01-06_2020-01-12',
+                'week10_2020-01-13_2020-01-19',
+                'week11_2020-01-20_2020-01-26',
+                'week12_2020-01-27_2020-02-02',
+                'week13_2020-02-03_2020-02-09',
+                'week14_2020-02-10_2020-02-16',
+                'week15_2020-02-17_2020-02-23',
+                'week16_2020-02-24_2020-03-02',
+                'week17_2020-03-10_2020-03-16',
+                'week18_2020-03-17_2020-02-23',
+                'week19_2020-03-24_2020-03-30',
+                'week20_2020-03-31_2020-04-06',
+                'week21_2020-04-07_2020-04-13')
 
 names(weekly_prec) <- week_names
 
 ```
 
-Here is an example of our raw data. The plots below show monthly rainfall data for the months of November, 2019, to March, 2020.
+Here is an example of our raw data. The plot below shows monthly rainfall data for the months of November, 2019, to March, 2020.
 
 ```{r, error = TRUE,  message = FALSE, warning = FALSE, fig.width = 7, fig.height = 2.5, fig.align = "center"}
-
-#Display monthly dataset using rasterVis levelplot
 
 levelplot(monthly_prec, 
           scales=list(draw=FALSE), #get rid of axes
           par.settings = viridisTheme(axis.line = list(col = "transparent")), #get rid of boundary
-          main = "Monthly Mean Percipitation", #set title
+          main = "Monthly Mean Percipitation (Nov 2019 - March 2020)", #set title
           names.attr=c("Nov 2019", "Dec 2019", "Jan 2020", "Feb 2020", "Mar 2020"), #set subplot titles
           colorkey=list(labels=list(cex=1, font=1), title = "mm/Day")) #alter legend labels and title
 
 ```
+
+
+
+Here is another example of our raw data. This plot shows the weekly rainfall data. 
+
+```{r, error = TRUE,  message = FALSE, warning = FALSE, fig.width = 7, fig.height = 6, fig.align = "center"}
+
+levelplot(weekly_prec, 
+          scales=list(draw=FALSE), #get rid of axes
+          par.settings = viridisTheme(axis.line = list(col = "transparent")), #get rid of boundary
+          main = "Weekly Mean Percipitation (10/27/2019 - 04/13/20)", 
+          names.attr=c("10/27- 11/2", "11/3-11/10", "11/11-11/16", "11/17-11/23", "11/24-11/30", "12/1-12/7", 
+                       "12/8-12/14", "12/15-12/21", "12/22-12/28", "12/29-1/5",
+                       "1/6-1/12", "1/13-1/19", "1/20-1/26", "1/27-2/2", "2/3-2/9", "2/10-2/16", "2/17-2/23",
+                       "2/24-3/2", "3/3-3/9", "3/10-3/16", "3/24-3/30", "3/31-4/6", "4/7-4/13"),#set title
+          colorkey=list(labels=list(cex=1, font=1), title = "mm/Day")) #alter legend labels and title
+
+```
+
 
 
 ## Methods
@@ -183,47 +205,6 @@ Information source: https://www.droughtmanagement.info/noaa-drought-index-ndi/
 
 ```{r, error= TRUE, echo = FALSE, warning = FALSE}
 
-"
-noaa_drought <- function(weekly_prec, list){
-  
-  x = 0
-  
-  i= 1
-  
-  while (x < (nlayers(weekly_prec) - 8)) {
-    
-    eightweek <- weekly_prec[[ i:(i + 7) ]]
-    
-    present <- weekly_prec[[(i + 8)]]
-    
-    mean_eightweek <- calc(eightweek, fun = mean)
-    
-    noaa <- (present / mean_eightweek)
-    
-    list[[i]] <- noaa
-    
-    i = i + 1
-    x = x + 1
-  }
-  
-  return(list)
-}
-
-
-
-noaa_class <- function(x){
-  
-  m <- c(-1, 0.6, 1,  0.6, Inf, NA)
-  
-  rclmat <- matrix(m, ncol=3, byrow=TRUE)
-  
-  rc <- reclassify(x, rclmat)
-  
-} 
-
-"
-
-
 result_list <- list() #create a list to store outputs
 
 noaa_stack <- SouthAfricaDrought::noaa_drought(weekly_prec, result_list) %>% stack() #calculate the NOAA drought index
@@ -252,15 +233,23 @@ names(noaa_class_stack) <- c('Week 9', #rename layers
 
 # Data Visualization
 
+The two ShinyApps below show the results for the drought indices. By sliding the time-scale, you can switch between raster layers. It is very slow, so be patient. 
+
+```{r, error = FALSE, warning = FALSE}
+
+# Display Decile Drought results in an interactive ShinyApp
+
+```
 
 ```{r, echo = FALSE, warning = FALSE}
-#Display NOAA Drought results in an interactive ShinyApp
+
+# Display NOAA Drought results in an interactive ShinyApp
 
 pal <- colorFactor("red", 1, na.color ="transparent") #create palette 
 
 shinyApp(ui <- fluidPage( #create embedded ShinyApp
   
-  titlePanel("Weekly NOAA Index (01/06/2020 - 03/31/2020)"), #set page title
+  titlePanel("Weekly NOAA Index (01/06/2020 - 04/48/2020)"), #set page title
 
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
@@ -312,9 +301,21 @@ server <- function(input, output, session) {
 
 ```
 
+
+
 # Results & Potential Improvements
 
+## Compare outputs
 
+Deciles: 
+
+NOAA Drought: 
+
+## Potential Improvements
+
+This initial package produces drought indices which only utilize rainfall data. On one hand, having one dataset makes it much easier to calculate indices. However, these are not necessarily the best indices for measuring vegetative stress because they exclude important variables such as soil moisture and evapotranspirition. For future development, we would suggest developing and incorporating more sophisticated metrics. 
+
+Additionally, though this package successfully produces an interactive ShinyApp. It would be better to host the app externally. This would hopefully improve the speed of the data reactivation as the user moves the slider thereby improving the entire user experience. 
 
 
 
@@ -322,7 +323,7 @@ server <- function(input, output, session) {
 ### Maseeng
 
 1. Rainfall data download from GEE
-2. Deciles function and visualization
+2. Deciles function
 3. Writing up Project Overview
 
 ### Emily
