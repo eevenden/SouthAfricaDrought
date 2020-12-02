@@ -87,6 +87,12 @@ library(rasterVis)
 library(lattice)
 library(latticeExtra)
 
+install.packages("shinydashboard")
+install.packages("leaflet")
+install.packages("rasterVis")
+install.packages("lattice")
+install.packages("latticeExtra")
+
 #set custom equal area projection for South Africa
 afalb <- paste0("+proj=aea +lat_1=20 +lat_2=-23 +lat_0=0 +lon_0=25 +x_0=0 ", "+y_0=0 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs")
 
