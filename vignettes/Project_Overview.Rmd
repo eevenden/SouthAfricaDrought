@@ -242,7 +242,7 @@ dec_class
 
 shinyApp(ui <- fluidPage( #create embedded ShinyApp
   
-  titlePanel("Monthly Deciles Index (11/01/2019 - 03/31/2020)"), #set page title
+  titlePanel("Monthly Deciles Index (November, 2019 - March, 2020)"), #set page title
 
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
@@ -250,7 +250,7 @@ shinyApp(ui <- fluidPage( #create embedded ShinyApp
     # Sidebar panel for inputs ----
     sidebarPanel(
 
-      sliderInput(inputId = "slider", label = "Monthly", min = 1, max = 5, value = 1) #set interactive slider options. 
+      sliderInput(inputId = "slider", label = "Month", min = 1, max = 5, value = 1) #set interactive slider options. 
     ),
 
     # Main panel for displaying outputs ----
