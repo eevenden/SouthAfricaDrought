@@ -187,11 +187,8 @@ The Deciles index compares precipitation from a specific time interval with prec
 Information source: https://agrimetsoft.com/faq/What%20is%20DI(Deciles%20Index)
 
 ```{r, error= TRUE, echo = FALSE, warning = FALSE}
-#write out code here and explain
-#Deciles
-q1 <- quantile(monthly_prec, c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1), na.rm=TRUE)
 
-q1
+
 
 ```
 
@@ -311,7 +308,9 @@ Deciles:
 
 NOAA Drought: 
 
+
 ## Potential Improvements
+
 
 This initial package produces drought indices which only utilize rainfall data. On one hand, having one dataset makes it much easier to calculate indices. However, these are not necessarily the best indices for measuring vegetative stress because they exclude important variables such as soil moisture and evapotranspirition. For future development, we would suggest developing and incorporating more sophisticated metrics. 
 
