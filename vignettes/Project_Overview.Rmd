@@ -236,11 +236,66 @@ The two ShinyApps below show the results for the drought indices. By sliding the
 
 # Display Decile Drought results in an interactive ShinyApp
 
+pal <- colorFactor(c('red', 'orange', 'yellow', 'green', 'blue'), levels = 1:5, na.color ="transparent") #create palette 
+
+dec_class
+
+shinyApp(ui <- fluidPage( #create embedded ShinyApp
+  
+  titlePanel("Monthly Deciles Index (11/01/2019 - 03/31/2020)"), #set page title
+
+  # Sidebar layout with input and output definitions ----
+  sidebarLayout(
+
+    # Sidebar panel for inputs ----
+    sidebarPanel(
+
+      sliderInput(inputId = "slider", label = "Monthly", min = 1, max = 5, value = 1) #set interactive slider options. 
+    ),
+
+    # Main panel for displaying outputs ----
+    mainPanel(
+
+      # Output:
+      leafletOutput("Raster", width = "100%") #make output a leaflet interactive map
+    )
+  )),
+
+
+server <- function(input, output, session) {
+
+  output$Raster <- renderLeaflet({ #create map
+    
+    leaflet() %>% 
+      
+      addTiles() %>% #add OSM tiles as basemap
+      
+      setView(lat= -29, lng=24, zoom = 5) %>% #set the map center
+      
+      addRasterImage(df_filtered(), color = pal) %>% #add raster data which will change based on slider input
+      
+      addLegend("bottomleft", labels= c("Decile 1", "Decile 2", "Decile 3", "Decile 4", "Decile 5"), values = c(1, 5),
+                colors = c('red', 'orange', 'yellow', 'green', 'blue'), opacity = .60) #add legend
+
+  })
+  
+  df_filtered <- reactive({ #object for updating data display
+    
+    dec_class[[input$slider]] #filter data based on slider input and only keep non-NA pixels
+    
+    })
+  
+  observe({
+    leafletProxy(mapId = "Raster") %>% clearImages() %>% addRasterImage(df_filtered(), color = pal, opacity = 0.6) #object which clears old data and loads updated data
+  })
+  
+  options = list(height = 1500) #set height of map
+
+})
+
 ```
 
 ```{r, echo = FALSE, warning = FALSE}
-
-# Display NOAA Drought results in an interactive ShinyApp
 
 pal <- colorFactor("red", 1, na.color ="transparent") #create palette 
 
