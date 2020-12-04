@@ -7,6 +7,7 @@ runtime: shiny
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
+  fig.align = "center",
   comment = "#>"
 )
 ```
@@ -24,14 +25,6 @@ knitr::opts_chunk$set(
 
 We aim to identify bouts of drought in South Africa over the summer season of November, 2019, to March, 2020. Drought will be determined by persisting stretches of no rainfall. We will use two drought indices which rely solely on rainfall data: the Deciles Index and the NOAA Drought Index to identify areas of South Africa experiencing drought. Through this project, we hope to program easy drought metrics for South Africa which could be used to determine early warnings of low crop yields.
 
-
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  fig.align = "center",
-  comment = "#>"
-)
-```
 
 # Primary Objectives
 
@@ -198,50 +191,31 @@ Information source: https://agrimetsoft.com/faq/What%20is%20DI(Deciles%20Index)
 
 ```{r, error= TRUE, echo = FALSE, warning = FALSE}
 
-#Summer rainfall region is observed on the east of South Africa
-lt_monthly_prec
-
-
 #sets up the decile breakdown of the mean values for each month
 lt_dec <- quantile(lt_monthly_prec, c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1), na.rm = TRUE) %>% as.data.frame()
-
-
-#Creates classification vector of the values for November
-classification_values_nov <- c(-Inf, lt_dec[1, 3], 1,
-       lt_dec[1, 3], lt_dec[1, 5], 2, 
-       lt_dec[1, 5], lt_dec[1, 7], 3,
-       lt_dec[1,7], lt_dec[1,9], 4,
-       lt_dec[1, 9], Inf, 5)
-
-#Creates the matrix to be used to reclass the values stored in the above classification_values_nov vector.  The above vector is specific to the month of November as you can tell by the use of row 1 within the brackets i.e. [1,3]
-decile_matrix <- matrix(classification_values_nov, ncol=3, byrow = TRUE)
 
 #Vector of Months
 names.attr=c("Nov_2019", "Dec_2019", "Jan_2020", "Feb_2020", "Mar_2020")
 
-#Reclasses the November values using the decile reclass matrix created above, think the reclass module in Terrset
-classified_november_raster <- reclassify(monthly_prec[[1]], decile_matrix)
-
-#For Loop to automate Months 
-
+#For Loop to reclassify Months 
 months_storage <- list()
 
 for(i in 1:5){
   
-  classification_values <- c(-Inf, lt_dec[i, 3], 1,
+  classification_values <- c(-Inf, lt_dec[i, 3], 1, #set reclassification ranges values 
        lt_dec[i, 3], lt_dec[i, 5], 2, 
        lt_dec[i, 5], lt_dec[i, 7], 3,
        lt_dec[i, 7], lt_dec[i, 9], 4,
        lt_dec[i, 9], Inf, 5)
   
-  decile_matrix <- matrix(classification_values, ncol=3, byrow = TRUE)
+  decile_matrix <- matrix(classification_values, ncol=3, byrow = TRUE) #convert to matrix
 
-  months_storage[[i]] <- reclassify(monthly_prec[[i]], decile_matrix)
+  months_storage[[i]] <- reclassify(monthly_prec[[i]], decile_matrix) #store result to a list
   
-  names(months_storage[[i]]) <- names.attr[i]
+  names(months_storage[[i]]) <- names.attr[i] #name each layer
 } 
 
-months_storage_stack <- stack(months_storage)
+months_storage_stack <- stack(months_storage) #stack reclassified layers
 
 ```
 
@@ -332,7 +306,7 @@ server <- function(input, output, session) {
   
   df_filtered <- reactive({ #object for updating data display
     
-    dec_class[[input$slider]] #filter data based on slider input and only keep non-NA pixels
+    months_storage_stack[[input$slider]] #filter data based on slider input and only keep non-NA pixels
     
     })
   
@@ -340,7 +314,7 @@ server <- function(input, output, session) {
     leafletProxy(mapId = "Raster") %>% clearImages() %>% addRasterImage(df_filtered(), color = pal, opacity = 0.6) #object which clears old data and loads updated data
   })
   
-  options = list(height = 1500) #set height of map
+  options = list(height = 2000) #set height of map
 
 })
 
@@ -400,7 +374,7 @@ server <- function(input, output, session) {
     leafletProxy(mapId = "Raster") %>% clearImages() %>% addRasterImage(df_filtered(), color = pal, opacity = 0.6) #object which clears old data and loads updated data
   })
   
-  options = list(height = 1500) #set height of map
+  options = list(height = 2000) #set height of map
 
 })
 
