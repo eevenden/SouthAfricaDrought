@@ -342,7 +342,7 @@ shinyApp(ui <- fluidPage( #create embedded ShinyApp
     # Sidebar panel for inputs ----
     sidebarPanel(
 
-      sliderInput(inputId = "slider", label = "Week", min = 0, max = 14, value = 1) #set interactive slider options. 
+      sliderInput(inputId = "slider", label = "Week", min = 1, max = 14, value = 1) #set interactive slider options. 
     ),
 
     # Main panel for displaying outputs ----
