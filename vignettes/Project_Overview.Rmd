@@ -183,7 +183,7 @@ Here is another example of our raw data. This plot shows the weekly rainfall dat
 levelplot(weekly_prec, 
           scales=list(draw=FALSE), #get rid of axes
           par.settings = viridisTheme(axis.line = list(col = "transparent")), #get rid of boundary
-          main = "Weekly Mean Percipitation (10/27/2019 - 04/13/20)", 
+          main = "Weekly Mean Precipitation (10/27/2019 - 04/13/20)", 
           names.attr=c("10/27- 11/2", "11/3-11/10", "11/11-11/16", "11/17-11/23", "11/24-11/30", "12/1-12/7", 
                        "12/8-12/14", "12/15-12/21", "12/22-12/28", "12/29-1/5",
                        "1/6-1/12", "1/13-1/19", "1/20-1/26", "1/27-2/2", "2/3-2/9", "2/10-2/16", "2/17-2/23",
@@ -220,15 +220,68 @@ The Deciles index compares precipitation from a specific time interval with prec
 Information source: https://agrimetsoft.com/faq/What%20is%20DI(Deciles%20Index)
 
 ```{r, error= TRUE, echo = FALSE, warning = FALSE}
-#write out code here and explain
-#Deciles
-q1 <- quantile(monthly_prec, c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1), na.rm=TRUE)
 
-q1
+#Summer rainfall region is observed on the east of South Africa
+lt_monthly_prec
+
+
+#sets up the decile breakdown of the mean values for each month
+lt_dec <- quantile(lt_monthly_prec, c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1), na.rm = TRUE) %>% as.data.frame()
+
+
+#Creates classification vector of the values for November
+classification_values_nov <- c(-Inf, lt_dec[1, 3], 1,
+       lt_dec[1, 3], lt_dec[1, 5], 2, 
+       lt_dec[1, 5], lt_dec[1, 7], 3,
+       lt_dec[1,7], lt_dec[1,9], 4,
+       lt_dec[1, 9], Inf, 5)
+
+#Example of classification of qualifying precipitation amount for water stress level
+lt_dec[1, 3]
+
+
+#Creates the matrix to be used to reclass the values stored in the above classification_values_nov vector.  The above vector is specific to the month of November as you can tell by the use of row 1 within the brackets i.e. [1,3]
+decile_matrix <- matrix(classification_values_nov, ncol=3, byrow = TRUE)
+
+#Vector of Months
+names.attr=c("Nov_2019", "Dec_2019", "Jan_2020", "Feb_2020", "Mar_2020")
+
+#To get a particular month index using position value, i.e. names.attr[1] will give out the November_2019 name)
+names.attr[1]
+
+#Reclasses the November values using the decile reclass matrix created above, think the reclass module in Terrset
+classified_november_raster <- reclassify(monthly_prec[[1]], decile_matrix)
+
+
+plot(classified_november_raster)
+
+
+#final_raster <- stack(classified_november_raster, ..., etc. )
 
 ```
 
->>>>>>> de78cf0d35406d17a84f2d5a1d80758c75b24e54
+For Loop to automate Months 
+```{r}
+
+months_storage <- list()
+for(i in 1:5){
+  classification_values <- c(-Inf, lt_dec[i, 3], 1,
+       lt_dec[i, 3], lt_dec[i, 5], 2, 
+       lt_dec[i, 5], lt_dec[i, 7], 3,
+       lt_dec[i,7], lt_dec[i,9], 4,
+       lt_dec[i, 9], Inf, 5)
+  
+  decile_matrix <- matrix(classification_values, ncol=3, byrow = TRUE)
+
+  # names.attr[i]
+
+  months_storage[[i]] <- reclassify(monthly_prec[[i]], decile_matrix)
+  names(months_storage[[i]]) <- names.attr[i]
+} 
+
+months_storage_stack <- stack(months_storage)
+plot(months_storage_stack)
+```
 
 
 ### 2. NOAA Drought Index
