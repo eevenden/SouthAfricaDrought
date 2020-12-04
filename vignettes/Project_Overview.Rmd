@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
-We aim to identify bouts of drought in South Africa over the summer season of November, 2019, to March, 2020. Drought will be determined by persisting stretches of no rainfall. We will use two drought indices which rely solely on rainfall data: the Deciles Index and the NOAA Drought Index to identify areas of South Africa expericning drought. Through this project, we hope to program easy drought metrics for South Africa which could be used to determine early warnings of low crop yields.
+We aim to identify bouts of drought in South Africa over the summer season of November, 2019, to March, 2020. Drought will be determined by persisting stretches of no rainfall. We will use two drought indices which rely solely on rainfall data: the Deciles Index and the NOAA Drought Index to identify areas of South Africa experiencing drought. Through this project, we hope to program easy drought metrics for South Africa which could be used to determine early warnings of low crop yields.
 >>>>>>> de78cf0d35406d17a84f2d5a1d80758c75b24e54
 
 
@@ -43,7 +43,7 @@ We aim to identify bouts of drought in South Africa over the summer season of No
 
 - Program two drought indices
 
-- Identify areas in South Africa that experienced drought last summer (2019-2020).
+- Identify areas in South Africa that experienced drought last Summer (2019-2020).
 
 
 
@@ -168,7 +168,7 @@ Here is an example of our raw data. The plot below shows monthly rainfall data f
 levelplot(monthly_prec, 
           scales=list(draw=FALSE), #get rid of axes
           par.settings = viridisTheme(axis.line = list(col = "transparent")), #get rid of boundary
-          main = "Monthly Mean Percipitation (Nov 2019 - March 2020)", #set title
+          main = "Monthly Mean Precipitation (Nov 2019 - March 2020)", #set title
           names.attr=c("Nov 2019", "Dec 2019", "Jan 2020", "Feb 2020", "Mar 2020"), #set subplot titles
           colorkey=list(labels=list(cex=1, font=1), title = "mm/Day")) #alter legend labels and title
 
@@ -205,7 +205,7 @@ levelplot(weekly_prec,
 
 ### 1. Deciles Index
 
-The Deciles index compares precipitation from a specific time interval with precipitation from a historic time interval (usually 30 years or more). This index only uses precipitation data. The decile method divides each month of historic precipitation data  into ten equal parts. These categories can then be used to assess the new time interval. The decile ranges can be categorized as such:
+The Deciles Index compares precipitation from a specific time interval with precipitation from a historic time interval (usually 30 years or more). This index only uses precipitation data. The decile method divides each month of historic precipitation data  into ten equal parts. These categories can then be used to assess the new time interval. The decile ranges can be categorized as such:
 
   Deciles 1-2: Much below Normal
   
@@ -397,7 +397,7 @@ NOAA Drought:
 
 ## Potential Improvements
 
-This initial package produces drought indices which only utilize rainfall data. On one hand, having one dataset makes it much easier to calculate indices. However, these are not necessarily the best indices for measuring vegetative stress because they exclude important variables such as soil moisture and evapotranspirition. For future development, we would suggest developing and incorporating more sophisticated metrics. 
+This initial package produces drought indices which only utilize rainfall data. On one hand, having one dataset makes it much easier to calculate indices. However, these are not necessarily the best indices for measuring vegetative stress because they exclude important variables such as soil moisture and evapotranspiration. For future development, we would suggest developing and incorporating more sophisticated metrics. 
 
 Additionally, though this package successfully produces an interactive ShinyApp. It would be better to host the app externally. This would hopefully improve the speed of the data reactivation as the user moves the slider thereby improving the entire user experience. 
 
