@@ -205,11 +205,11 @@ months_storage <- list()
 
 for(i in 1:5){
   
-  classification_values <- c(-Inf, lt_dec[i, 3], 1, #set reclassification ranges values 
-       lt_dec[i, 3], lt_dec[i, 5], 2, 
-       lt_dec[i, 5], lt_dec[i, 7], 3,
-       lt_dec[i, 7], lt_dec[i, 9], 4,
-       lt_dec[i, 9], Inf, 5)
+  classification_values <- c(-Inf, lt_dec[i, 3], 1, #set reclassification values
+                             lt_dec[i, 3], lt_dec[i, 5], 2, 
+                             lt_dec[i, 5], lt_dec[i, 7], 3,
+                             lt_dec[i, 7], lt_dec[i, 9], 4, 
+                             lt_dec[i, 9], Inf, 5)
   
   decile_matrix <- matrix(classification_values, ncol=3, byrow = TRUE) #convert to matrix
 
