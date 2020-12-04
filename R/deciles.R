@@ -1,17 +1,15 @@
 #' deciles function
 #'
-#' @description 
-#' @param x rasterstack containing precipitation data
+#' @description a function which calculates the deciles for each layer of a raster stack and returns the results as a dataframe
+#' @param input rasterstack containing long-term precipitation data
 #' @export
 #' @examples
-#' avg_stack("C:/Users/Emily/Documents/Fall_2020/Geospatial_R/MODIS_Temp", "2020_01.*\\.tif", SA, "2020_01_mean_temp.tif")
+#' deciles(lt_prec)
 #'
-#deciles <- function(x){
-  #quantile(x, c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1), na.rm=TRUE) #get numerical range for each decile
+deciles <- function(input){
   
-  #reclass each layer of the stack according to ranges, save as new raster layer
+  output <- quantile(input, c(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1), na.rm=TRUE) %>% as.data.frame()
   
-  #return new stack
+  return(output)
   
-#}
-
+}
