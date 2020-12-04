@@ -238,8 +238,6 @@ The two ShinyApps below show the results for the drought indices. By sliding the
 
 pal <- colorFactor(c('red', 'orange', 'yellow', 'green', 'blue'), levels = 1:5, na.color ="transparent") #create palette 
 
-dec_class
-
 shinyApp(ui <- fluidPage( #create embedded ShinyApp
   
   titlePanel("Monthly Deciles Index (November, 2019 - March, 2020)"), #set page title
@@ -359,7 +357,7 @@ server <- function(input, output, session) {
 
 ## Compare outputs
 
-Deciles: 
+Deciles: Deciles does not seem like a great way to analyze rainfall across space. I think these maps confirm that the eastern half of South Africa receives more rainfall than the western half. Having looked at some maps of ecoregions in South Africa, it seems that the eastern portion of South Africa has a drier climate and more arid landscape overall. Since we are broadly interested in A potential improvement for when using this index is to limit the geogrpahic extent to arabale land or to regions with large amounts of agriculture. 
 
 NOAA Drought: 
 
