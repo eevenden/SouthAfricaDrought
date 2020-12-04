@@ -258,10 +258,7 @@ plot(classified_november_raster)
 
 #final_raster <- stack(classified_november_raster, ..., etc. )
 
-```
-
-For Loop to automate Months 
-```{r}
+#For Loop to automate Months 
 
 months_storage <- list()
 for(i in 1:5){
