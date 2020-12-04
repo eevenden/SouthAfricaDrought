@@ -13,10 +13,10 @@ knitr::opts_chunk$set(
 ```
 
 
-## Authors: Emily Evenden and Maseeng Masitha
+### Authors: Emily Evenden and Maseeng Masitha
 
 
-## Date: December 4th, 2020
+### Date: December 4th, 2020
 
 
 
@@ -173,6 +173,9 @@ levelplot(weekly_prec,
 ## Methods
 
 
+We used the precipitation data to calculate two drought indices: the Deciles Index and the NOAA Drought Index. 
+
+
 ### 1. Deciles Index
 
 The Deciles Index compares precipitation from a specific time interval with precipitation from a historic time interval (usually 30 years or more). This index only uses precipitation data. The decile method divides each month of historic precipitation data  into ten equal parts. These categories can then be used to assess the new time interval. The decile ranges can be categorized as such:
@@ -222,7 +225,7 @@ months_storage_stack <- stack(months_storage) #stack reclassified layers
 
 ### 2. NOAA Drought Index
 
-The NOAA Drought Index is also a precipitation based index. This index utilizes weekly precipitation data for the time interval of interest. In this case, the mean precipitation for an eight-week interval is calculated and then compared with the subsequent ninth week. If the ninth week is greater than 60% of the precipitation, it's classified as having little to no water stress. An area is considered no longer stressed once the rainfall returns to 60% or more. 
+The NOAA Drought Index is also a precipitation based index. This index utilizes weekly precipitation data for the time interval of interest. In this case, the mean precipitation for an eight-week interval is calculated and then compared with the subsequent ninth week. If the ninth week has more than 60% of the eight-week average, it's classified as having little to no water stress. An area is considered no longer stressed once the rainfall returns to 60% or more. 
 
 Information source: https://www.droughtmanagement.info/noaa-drought-index-ndi/
 
@@ -256,12 +259,15 @@ names(noaa_class_stack) <- c('Week 9', #rename layers
 
 # Data Visualization
 
-The two ShinyApps below show the results for the drought indices. By sliding the time-scale, you can switch between raster layers. It is very slow, so be patient. 
+
+The two ShinyApps below show the outcomes of each drought index. By sliding the time-scale, you can switch between raster layers. 
+
+It is very slow, so be patient. 
 
 
-```{r, error = FALSE, warning = FALSE}
+```{r, echo = FALSE, warning = FALSE}
 
-# Display Decile Drought results in an interactive ShinyApp
+# Display Decile Index results in an interactive ShinyApp
 
 pal <- colorFactor(c('red', 'orange', 'yellow', 'green', 'blue'), levels = 1:5, na.color ="transparent") #create palette 
 
@@ -314,7 +320,7 @@ server <- function(input, output, session) {
     leafletProxy(mapId = "Raster") %>% clearImages() %>% addRasterImage(df_filtered(), color = pal, opacity = 0.6) #object which clears old data and loads updated data
   })
   
-  options = list(height = 2000) #set height of map
+  options = list(height = 3000) #set height of map
 
 })
 
@@ -374,7 +380,7 @@ server <- function(input, output, session) {
     leafletProxy(mapId = "Raster") %>% clearImages() %>% addRasterImage(df_filtered(), color = pal, opacity = 0.6) #object which clears old data and loads updated data
   })
   
-  options = list(height = 2000) #set height of map
+  options = list(height = 3000) #set height of map
 
 })
 
@@ -382,9 +388,11 @@ server <- function(input, output, session) {
 
 
 
-# Results & Potential Improvements
 
-## Compare outputs
+
+# Results & Improvements
+
+## Results
 
 Deciles: Deciles does not seem like a great way to analyze rainfall across space. These maps confirm that the eastern half of South Africa receives more rainfall than the western half. Having looked at some maps of ecoregions in South Africa, it seems that the western portion of South Africa has a drier climate and more arid landscape overall. Since we are broadly interested in the state of agricultural land, we could improve these results by limiting the geographic extent to arabale land or to regions with large amounts of agriculture. This would then limit decile value and exclude arid regions. 
 
@@ -402,14 +410,16 @@ Additionally, though this package successfully produces an interactive ShinyApp.
 ### Maseeng
 
 1. Rainfall data download from GEE
-2. Decile calculations
+2. Decile calculations in Project Overview
 3. Writing up Project Overview
+4. Presentation
 
 ### Emily
 
 1. South Africa Boundary, Temperature, and Rainfall data download from GEE
 2. Preprocessing raster data and adding it to R package
-3. Avg_Stack, Crop_Stack, NOAA_Drought, and NOAA_class functions
+3. Avg_Stack, Crop_Stack, NOAA_Drought, NOAA_class, Deciles, and Deciles_class functions
 4. ShinyApp development
 5. Writing up Project Overview
+6. Presentation
 
