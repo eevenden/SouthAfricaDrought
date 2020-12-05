@@ -269,7 +269,7 @@ It is very slow, so be patient.
 
 # Display Decile Index results in an interactive ShinyApp
 
-pal <- colorFactor(c('red', 'orange', 'yellow', 'green', 'blue'), levels = 1:5, na.color ="transparent") #create palette 
+pal_1 <- colorFactor(c('red', 'orange', 'yellow', 'green', 'blue'), levels = 1:5, na.color ="transparent") #create palette 
 
 shinyApp(ui <- fluidPage( #create embedded ShinyApp
   
@@ -303,7 +303,7 @@ server <- function(input, output, session) {
       
       setView(lat= -29, lng=24, zoom = 5) %>% #set the map center
       
-      addRasterImage(df_filtered(), color = pal) %>% #add raster data which will change based on slider input
+      addRasterImage(df_filtered(), color = pal_1) %>% #add raster data which will change based on slider input
       
       addLegend("bottomleft", labels= c("Decile 1", "Decile 2", "Decile 3", "Decile 4", "Decile 5"), values = c(1, 5), colors = c('red', 'orange', 'yellow', 'green', 'blue'), opacity = .60) #add legend
 
@@ -316,7 +316,7 @@ server <- function(input, output, session) {
     })
   
   observe({
-    leafletProxy(mapId = "Raster") %>% clearImages() %>% addRasterImage(df_filtered(), color = pal, opacity = 0.6) #object which clears old data and loads updated data
+    leafletProxy(mapId = "Raster") %>% clearImages() %>% addRasterImage(df_filtered(), color = pal_1, opacity = 0.6) #object which clears old data and loads updated data
   })
   
   options = list(height = 3000) #set height of map
@@ -329,7 +329,7 @@ server <- function(input, output, session) {
 
 # Display NOAA Drought results in an interactive ShinyApp
 
-pal <- colorFactor("red", 1, na.color ="transparent") #create palette 
+pal_2 <- colorFactor("red", 1, na.color ="transparent") #create palette 
 
 shinyApp(ui <- fluidPage( #create embedded ShinyApp
   
@@ -363,7 +363,7 @@ server <- function(input, output, session) {
       
       setView(lat= -29, lng=24, zoom = 5) %>% #set the map center
       
-      addRasterImage(df_filtered(), color = pal) %>% #add raster data which will change based on slider input
+      addRasterImage(df_filtered(), color = pal_2) %>% #add raster data which will change based on slider input
       
       addLegend("bottomleft", labels=c("Vegetative Stress"), colors = c("red"), opacity = .60) #add legend
 
@@ -376,7 +376,7 @@ server <- function(input, output, session) {
     })
   
   observe({
-    leafletProxy(mapId = "Raster") %>% clearImages() %>% addRasterImage(df_filtered(), color = pal, opacity = 0.6) #object which clears old data and loads updated data
+    leafletProxy(mapId = "Raster") %>% clearImages() %>% addRasterImage(df_filtered(), color = pal_2, opacity = 0.6) #object which clears old data and loads updated data
   })
   
   options = list(height = 3000) #set height of map
