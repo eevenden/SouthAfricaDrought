@@ -218,7 +218,7 @@ for(i in 1:5){
   names(months_storage[[i]]) <- names.attr[i] #name each layer
 } 
 
-months_storage_stack <- stack(months_storage) #stack reclassified layers
+months_storage_stack <- stack(months_storage) #stack reclassified layer
 
 ```
 
@@ -305,14 +305,13 @@ server <- function(input, output, session) {
       
       addRasterImage(df_filtered(), color = pal) %>% #add raster data which will change based on slider input
       
-      addLegend("bottomleft", labels= c("Decile 1", "Decile 2", "Decile 3", "Decile 4", "Decile 5"), values = c(1, 5),
-                colors = c('red', 'orange', 'yellow', 'green', 'blue'), opacity = .60) #add legend
+      addLegend("bottomleft", labels= c("Decile 1", "Decile 2", "Decile 3", "Decile 4", "Decile 5"), values = c(1, 5), colors = c('red', 'orange', 'yellow', 'green', 'blue'), opacity = .60) #add legend
 
   })
   
   df_filtered <- reactive({ #object for updating data display
     
-    months_storage_stack[[input$slider]] #filter data based on slider input and only keep non-NA pixels
+    months_storage_stack[[input$slider]] #filter data based on slider input
     
     })
   
